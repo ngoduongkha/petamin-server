@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  # petamin_server:
+  #   depends_on:
+  #     - petamin_postgres
+  #   image: petamin_server:latest
+  #   container_name: petamin_server
+  #   env_file:
+  #     - docker.env
+  #   ports:
+  #     - 3000:3000
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile
+  petamin_postgres:
+    image: postgres
+    container_name: petamin_postgres
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "petamin" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    environment:
+      POSTGRES_PASSWORD: petamin
+      POSTGRES_USER: petamin
+      POSTGRES_DB: petamin
