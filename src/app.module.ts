@@ -1,32 +1,17 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import configuarations from './config';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmAsyncConfig } from './config/typeorm.config';
+import configurations from './config';
+import { UserModule } from './modules/users/user.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      load: configuarations,
-      isGlobal: true,
-      validationOptions: {
-        abortEarly: true,
-      },
-    }),
-    TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService) => {
-        // TODO: Constant
-        const config = configService.get<TypeOrmModuleOptions>('database');
-        if (!config) {
-          throw new Error('Cannot start app without ORM config');
-        }
-        return config;
-      },
-      inject: [ConfigService],
-    }),
+    ConfigModule.forRoot({ load: configurations, isGlobal: true }),
+    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     // TODO: refactor
-    UsersModule,
+    UserModule,
     AuthModule,
   ],
 })
