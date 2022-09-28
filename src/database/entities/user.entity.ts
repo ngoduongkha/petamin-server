@@ -1,3 +1,10 @@
+import {
+  Conversation,
+  Information,
+  Message,
+  Profile,
+  UserConversation,
+} from '@entity';
 import * as bcrypt from 'bcrypt';
 import {
   BeforeInsert,
@@ -6,13 +13,18 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
-import { Conversation, Message } from '.';
-import { UserStatus } from '../enum';
+import { EUserStatus } from '../enums';
 import { BaseEntity } from './base.entity';
 
-@Entity()
+@Entity({ name: 'users' })
 export class User extends BaseEntity {
+  constructor(patial: Partial<User>) {
+    super();
+    Object.assign(this, patial);
+  }
+
   @Column({ unique: true, type: 'varchar' })
   email: string;
 
@@ -29,33 +41,28 @@ export class User extends BaseEntity {
   @Column({
     name: 'status',
     type: 'enum',
-    enum: UserStatus,
-    default: UserStatus.INACTIVE,
+    enum: EUserStatus,
+    default: EUserStatus.INACTIVE,
     nullable: false,
   })
-  status: UserStatus;
+  status: EUserStatus;
 
-  // @OneToMany(
-  //   () => UserConversation,
-  //   (userConversation) => userConversation.user,
-  // )
-  // userConversation?: UserConversation[];
+  @OneToMany(
+    () => UserConversation,
+    (userConversation) => userConversation.user,
+  )
+  userConversation?: UserConversation[];
 
   @OneToMany(() => Message, (message) => message.user)
   messages?: Message[];
 
-  // @OneToMany(() => Information, (information) => information.user, {
-  //   eager: true,
-  // })
-  // information?: Information[];
+  @OneToOne(() => Profile, (profile) => profile.user)
+  profile: Profile;
 
-  @ManyToMany(() => Conversation, (conversations) => conversations.users)
-  @JoinTable({
-    name: 'user_conversation',
-    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'conversation_id' },
+  @OneToMany(() => Information, (information) => information.user, {
+    eager: true,
   })
-  conversations: Conversation[];
+  information?: Information[];
 
   @BeforeInsert()
   async hashPassword() {
