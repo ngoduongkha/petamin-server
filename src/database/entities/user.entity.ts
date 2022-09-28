@@ -53,6 +53,13 @@ export class User extends BaseEntity {
   )
   userConversation?: UserConversation[];
 
+  @JoinTable({
+    name: 'user_conversation',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'conversation_id' },
+  })
+  conversations: Conversation[];
+
   @OneToMany(() => Message, (message) => message.user)
   messages?: Message[];
 

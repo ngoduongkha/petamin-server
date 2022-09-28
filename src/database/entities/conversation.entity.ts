@@ -25,4 +25,11 @@ export class Conversation extends BaseEntity {
     (userConversation) => userConversation.conversation,
   )
   userConversation?: UserConversation[];
+
+  @JoinTable({
+    name: 'user_conversation',
+    joinColumn: { name: 'conversation_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id' },
+  })
+  users: User[];
 }
