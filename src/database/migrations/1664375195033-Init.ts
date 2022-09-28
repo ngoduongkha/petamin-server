@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Init1664374007610 implements MigrationInterface {
-    name = 'Init1664374007610'
+export class Init1664375195033 implements MigrationInterface {
+    name = 'Init1664375195033'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -58,6 +58,8 @@ export class Init1664374007610 implements MigrationInterface {
                 "gender" character varying,
                 "position" character varying,
                 "birthday" TIMESTAMP,
+                "user_id" uuid,
+                CONSTRAINT "REL_9e432b7df0d182f8d292902d1a" UNIQUE ("user_id"),
                 CONSTRAINT "PK_8e520eb4da7dc01d0e190447c8e" PRIMARY KEY ("id")
             )
         `);
@@ -104,6 +106,10 @@ export class Init1664374007610 implements MigrationInterface {
             ADD CONSTRAINT "FK_b312a0529c18723a53f7e90cd9d" FOREIGN KEY ("conversation_id") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
+            ALTER TABLE "profiles"
+            ADD CONSTRAINT "FK_9e432b7df0d182f8d292902d1a2" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
             ALTER TABLE "informations"
             ADD CONSTRAINT "FK_e3ea9fa4c09723d0a35de03faa3" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -112,6 +118,9 @@ export class Init1664374007610 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             ALTER TABLE "informations" DROP CONSTRAINT "FK_e3ea9fa4c09723d0a35de03faa3"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "profiles" DROP CONSTRAINT "FK_9e432b7df0d182f8d292902d1a2"
         `);
         await queryRunner.query(`
             ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_b312a0529c18723a53f7e90cd9d"
