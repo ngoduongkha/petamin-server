@@ -19,13 +19,6 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
       entities: [__dirname + '/../**/*.entity.{js,ts}'],
       migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
       migrationsTableName: '__migrations',
-
-      //   cli: {
-      //     migrationsDir: __dirname + '/../database/migrations',
-      //   },
-      extra: {
-        charset: 'utf8mb4_unicode_ci',
-      },
       synchronize: false,
     };
   },

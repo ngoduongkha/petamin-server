@@ -1,10 +1,10 @@
-export enum Emojis {
+export enum EEmoji {
   like = 'like',
   heart = 'heart',
   haha = 'haha',
 }
 
-export enum Backgrounds {
+export enum EBackground {
   white = 'white',
   lavender = 'lavender',
   green = 'green',

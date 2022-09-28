@@ -10,11 +10,12 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '../../database/entities';
-import { UserService } from '../users/user.service';
+import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { JwtGuard, LocalGuard } from './guard';
+import { JwtGuard } from './guard/jwt.guard';
+import { LocalGuard } from './guard/local.guard';
 
 @ApiTags('auth')
 @Controller('auth')

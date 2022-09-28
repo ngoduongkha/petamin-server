@@ -1,13 +1,13 @@
-import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
-import { BaseEntity, Conversation, User } from '.';
+import { Conversation, User } from '@entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'messages' })
 export class Message extends BaseEntity {
-  @Column({ name: 'conversation_id', nullable: true })
-  conversation_id: number;
-
-  @Column({ name: 'user_id', nullable: true })
-  user_id: number;
+  constructor(patial: Partial<Message>) {
+    super();
+    Object.assign(this, patial);
+  }
 
   @Column({ default: false })
   status: boolean;
@@ -15,9 +15,15 @@ export class Message extends BaseEntity {
   @Column({ name: 'message', length: 255 })
   message: string;
 
+  @Column({ name: 'user_id', nullable: true })
+  userId?: string;
+
   @ManyToOne(() => User, (user) => user.messages)
   @JoinColumn({ name: 'user_id' })
   user?: User;
+
+  @Column({ name: 'conversation_id', nullable: true })
+  conversationId?: string;
 
   @ManyToOne(() => Conversation, (conversation) => conversation.messages)
   @JoinColumn({ name: 'conversation_id' })
