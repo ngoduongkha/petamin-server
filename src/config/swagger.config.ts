@@ -12,7 +12,6 @@ export const configSwagger = (app: INestApplication): void => {
     .setDescription(pkgDesc)
     .setVersion(pkgVersion)
     .addBearerAuth()
-    .addServer('v1', 'dev')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);

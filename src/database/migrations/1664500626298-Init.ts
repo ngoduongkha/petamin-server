@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Init1664375195033 implements MigrationInterface {
-    name = 'Init1664375195033'
+export class Init1664500626298 implements MigrationInterface {
+    name = 'Init1664500626298'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -19,6 +19,19 @@ export class Init1664375195033 implements MigrationInterface {
                 "status" "public"."users_status_enum" NOT NULL DEFAULT 'inactive',
                 CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"),
                 CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "conversations" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "isDeleted" boolean NOT NULL DEFAULT false,
+                "title" character varying,
+                "description" character varying(5000),
+                "background" character varying DEFAULT 'white',
+                "emoji" character varying DEFAULT 'haha',
+                CONSTRAINT "PK_ee34f4f7ced4ec8681f26bf04ef" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -77,19 +90,6 @@ export class Init1664375195033 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "conversations" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "isDeleted" boolean NOT NULL DEFAULT false,
-                "title" character varying,
-                "description" character varying(5000),
-                "background" character varying DEFAULT 'white',
-                "emoji" character varying DEFAULT 'haha',
-                CONSTRAINT "PK_ee34f4f7ced4ec8681f26bf04ef" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
             ALTER TABLE "messages"
             ADD CONSTRAINT "FK_830a3c1d92614d1495418c46736" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -135,9 +135,6 @@ export class Init1664375195033 implements MigrationInterface {
             ALTER TABLE "messages" DROP CONSTRAINT "FK_830a3c1d92614d1495418c46736"
         `);
         await queryRunner.query(`
-            DROP TABLE "conversations"
-        `);
-        await queryRunner.query(`
             DROP TABLE "informations"
         `);
         await queryRunner.query(`
@@ -148,6 +145,9 @@ export class Init1664375195033 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "messages"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "conversations"
         `);
         await queryRunner.query(`
             DROP TABLE "users"

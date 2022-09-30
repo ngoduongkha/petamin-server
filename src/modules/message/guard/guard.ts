@@ -17,7 +17,9 @@ export class WsGuard implements CanActivate {
     const authToken: any = client.handshake?.query?.token;
     try {
       const decoded = this.jwtService.verify(authToken);
-      const user = await this.userService.getUserByEmail(decoded.email); // response to function
+      const user = await this.userService.getUserByEmailAndGetPassword(
+        decoded.email,
+      ); // response to function
       context.switchToWs().getData().user = user;
 
       return user;
