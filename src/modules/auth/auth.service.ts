@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '../../database/entities';
 import { UserService } from '../user/user.service';
+import { RegisterDto } from './dto/register.dto';
 import { AuthPayload } from './interfaces/auth-payload.interface';
 
 @Injectable()
@@ -12,7 +13,7 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
   async authentication(email: string, password: string): Promise<any> {
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.getUserByEmailAndGetPassword(email);
     const check = await bcrypt.compare(password, user.password);
 
     if (!user || !check) {
@@ -24,6 +25,21 @@ export class AuthService {
 
   public getCookieForLogOut() {
     return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+  }
+
+  async create(dto: RegisterDto) {
+    const user = await this.userService.createUser(dto);
+
+    const payload: AuthPayload = {
+      name: user.name,
+      email: user.email,
+      id: user.id,
+    };
+
+    return {
+      token: this.jwtService.sign(payload),
+      user,
+    };
   }
 
   async login(user: User) {

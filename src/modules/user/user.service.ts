@@ -15,11 +15,15 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async getUserByEmail(email: string) {
-    return await this.userRepository.findOne({ where: { email } });
+  async getUserByEmailAndGetPassword(email: string) {
+    return await this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'password'],
+    });
   }
 
   async createUser(user: RegisterDto) {
-    return await this.userRepository.save(user);
+    const newUser = this.userRepository.create(user);
+    return await this.userRepository.save(newUser);
   }
 }

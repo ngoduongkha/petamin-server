@@ -9,6 +9,7 @@ import { ConversationModule } from './modules/conversation/conversation.module';
 import { InformationModule } from './modules/information/information.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { UserConversationModule } from './modules/user-conversation/user-conversation.module';
+import { MessagesModule } from './modules/message/message.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { UserConversationModule } from './modules/user-conversation/user-convers
     InformationModule,
     ProfileModule,
     UserConversationModule,
+    MessagesModule,
   ],
-  providers: [],
 })
 export class AppModule {}

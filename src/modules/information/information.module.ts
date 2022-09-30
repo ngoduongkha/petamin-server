@@ -8,5 +8,6 @@ import { Information } from '@entity';
   imports: [TypeOrmModule.forFeature([Information])],
   controllers: [InformationController],
   providers: [InformationService],
+  exports: [InformationService],
 })
 export class InformationModule {}
