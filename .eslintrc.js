@@ -26,7 +26,8 @@ module.exports = {
       {
         'endOfLine': 'off',
       }
-    ]
+    ],
+    semi: ["error", "always"],
   },
   
 };

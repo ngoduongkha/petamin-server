@@ -10,6 +10,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { UserModule } from '../user/user.module';
 import { jwtModuleAsyncOptions } from '@config';
+import { ProfileModule } from '../profile/profile.module';
 
 @Module({
   imports: [
@@ -17,8 +18,9 @@ import { jwtModuleAsyncOptions } from '@config';
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync(jwtModuleAsyncOptions),
     UserModule,
+    ProfileModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, UserService, JwtStrategy, LocalStrategy],
 })
-export class AuthModule {}
+export class AuthModule { }
