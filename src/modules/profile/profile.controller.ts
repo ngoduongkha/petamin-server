@@ -6,37 +6,38 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
+  UseGuards
 } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UpdateProfileDto } from './dto';
+import { JwtGuard } from '../auth/guard/jwt.guard';
+import { GetUser } from '../auth/decorators/get-user.decorator';
+import { User } from '@entity';
 
 @ApiTags('profile')
 @Controller('profile')
+@UseGuards(JwtGuard)
+@ApiBearerAuth('access-token')
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
-
-  // @Post()
-  // create(@Body() createProfileDto: CreateProfileDto) {
-  //   return this.profileService.create(createProfileDto);
-  // }
+  constructor(private readonly profileService: ProfileService) { }
 
   @Get()
-  findAll() {
-    return this.profileService.findAll();
+  async findAll() {
+    return await this.profileService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.profileService.findOne(+id);
+  @Get('me')
+  async getMe(@GetUser('id') userId: string) {
+    return await this.profileService.findByUserId(userId);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-  //   return this.profileService.update(+id, updateProfileDto);
-  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.profileService.remove(+id);
+  @Patch()
+  async update(@Body() updateProfileDto: UpdateProfileDto, @GetUser('id') userId: string) {
+    return await this.profileService.update(userId, updateProfileDto);
   }
+
+
 }

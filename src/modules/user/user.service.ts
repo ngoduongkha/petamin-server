@@ -1,15 +1,17 @@
 import { User } from '@entity';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
+import { ProfileService } from '../profile/profile.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+    private readonly profileService: ProfileService,
+  ) { }
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
@@ -24,6 +26,10 @@ export class UserService {
 
   async createUser(user: RegisterDto) {
     const newUser = this.userRepository.create(user);
-    return await this.userRepository.save(newUser);
+    const userCreated = await this.userRepository.save(newUser);
+
+    await this.profileService.create(userCreated.id);
+
+    return userCreated;
   }
 }
