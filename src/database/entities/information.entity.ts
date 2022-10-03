@@ -1,5 +1,5 @@
 import { User } from '@entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { ETypeInformation } from '../enums';
 import { BaseEntity } from './base.entity';
 
@@ -19,6 +19,10 @@ export class Information extends BaseEntity {
   @Column({ name: 'value', length: 255 })
   value: string;
 
+  @Column({ name: 'user_id', nullable: true })
+  userId?: string;
+
   @ManyToOne(() => User, (user) => user.messages)
+  @JoinColumn({ name: 'user_id' })
   user?: User;
 }

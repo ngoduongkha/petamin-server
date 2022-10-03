@@ -25,6 +25,7 @@ export class InformationService {
   // }
 
   async create(inputs: SaveInformationDto): Promise<Information> {
+    console.log('inputs :>> ', inputs);
     return await this.informationRepository.save(inputs);
   }
 
