@@ -10,6 +10,8 @@ import { InformationModule } from './modules/information/information.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { UserConversationModule } from './modules/user-conversation/user-conversation.module';
 import { MessagesModule } from './modules/message/message.module';
+import { PetModule } from './modules/pet/pet.module';
+import { SpeciesModule } from './modules/species/species.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { MessagesModule } from './modules/message/message.module';
     ProfileModule,
     UserConversationModule,
     MessagesModule,
+    PetModule,
+    SpeciesModule,
   ],
 })
 export class AppModule {}

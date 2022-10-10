@@ -18,9 +18,8 @@ import { ProfileModule } from '../profile/profile.module';
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync(jwtModuleAsyncOptions),
     UserModule,
-    ProfileModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, JwtStrategy, LocalStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy],
 })
-export class AuthModule { }
+export class AuthModule {}

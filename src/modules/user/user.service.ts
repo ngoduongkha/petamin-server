@@ -1,5 +1,5 @@
 import { User } from '@entity';
-import { Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
@@ -11,7 +11,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly profileService: ProfileService,
-  ) { }
+  ) {}
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
