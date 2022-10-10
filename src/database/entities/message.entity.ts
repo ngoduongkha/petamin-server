@@ -4,9 +4,9 @@ import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'messages' })
 export class Message extends BaseEntity {
-  constructor(patial: Partial<Message>) {
+  constructor(partial: Partial<Message>) {
     super();
-    Object.assign(this, patial);
+    Object.assign(this, partial);
   }
 
   @Column({ default: false })

@@ -11,12 +11,17 @@ export abstract class IdentityEntity {
 }
 
 export abstract class BaseEntity extends IdentityEntity {
-  @CreateDateColumn({ select: false })
+  @CreateDateColumn({ name: 'created_at', select: false })
   createdAt!: Date;
 
-  @UpdateDateColumn({ select: false })
+  @UpdateDateColumn({ name: 'updated_at', select: false })
   updatedAt!: Date;
 
-  @Column({ type: 'boolean', default: false, select: false })
+  @Column({
+    name: 'is_deleted',
+    type: 'boolean',
+    default: false,
+    select: false,
+  })
   isDeleted!: boolean;
 }

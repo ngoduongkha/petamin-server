@@ -1,18 +1,23 @@
 import { Profile } from '@entity';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateProfileDto } from './dto';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
-  ) { }
+  ) {}
 
   async findAll() {
-    return await this.profileRepository.find();
+    return await this.profileRepository.find({
+      where: {
+        isDeleted: false,
+      },
+    });
   }
 
   async findByUserId(userId: string) {
@@ -24,18 +29,20 @@ export class ProfileService {
   }
 
   async update(userId: string, profile: UpdateProfileDto): Promise<Profile> {
-    await this.profileRepository.update({
-      userId: userId,
-    },
-      profile);
+    await this.profileRepository.update(
+      {
+        userId: userId,
+      },
+      profile,
+    );
 
-    return await this.findByUserId(userId)
+    return await this.findByUserId(userId);
   }
 
   async create(userId: string): Promise<void> {
     const profile: Partial<Profile> = {
       userId: userId,
-    }
+    };
 
     await this.profileRepository.save(profile);
   }
