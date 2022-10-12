@@ -18,7 +18,7 @@ export const configSwagger = (app: INestApplication): void => {
         bearerFormat: 'Bearer',
         scheme: 'Bearer',
         type: 'http',
-        in: 'Header'
+        in: 'Header',
       },
       'access-token',
     )

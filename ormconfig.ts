@@ -16,7 +16,7 @@ const postgresConnectionOptions: PostgresConnectionOptions = {
   database: process.env.DB_NAME,
   logging: process.env.DB_LOGGING === 'true',
   entities: [join(__dirname, '**/*.entity{.ts,.js}')],
-  migrations: [join(__dirname, 'src/database/migrations/*{.ts,.js}')],
+  migrations: [join(__dirname, '**/database/migrations/*{.ts,.js}')],
   migrationsTableName: '__migrations',
   synchronize: false,
 };
