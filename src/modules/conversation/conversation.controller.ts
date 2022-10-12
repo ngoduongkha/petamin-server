@@ -9,12 +9,14 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/guard/jwt.guard';
 import { ConversationService } from './conversation.service';
+import { CreateConversationDto } from './dto/create-conversation.dto';
 
 @ApiTags('conversation')
 @UseGuards(JwtGuard)
+@ApiBearerAuth('access-token')
 @Controller('conversations')
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
@@ -30,9 +32,10 @@ export class ConversationController {
     return conversation;
   }
 
+  @ApiBody({ type: CreateConversationDto })
   @Post('/')
-  async create(@Body() inputs: Conversation): Promise<Conversation> {
-    return await this.conversationService.create(inputs);
+  async create(@Body() dto: CreateConversationDto) {
+    return await this.conversationService.create(dto);
   }
 
   // @Put('/:id')

@@ -20,7 +20,11 @@ export class UserService {
   async getUserByEmailAndGetPassword(email: string) {
     return await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password'],
+      select: {
+        id: true,
+        email: true,
+        password: true,
+      },
     });
   }
 

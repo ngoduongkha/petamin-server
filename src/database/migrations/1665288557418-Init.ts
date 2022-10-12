@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
+<<<<<<< HEAD:src/database/migrations/1664807249942-Init.ts
 <<<<<<<< HEAD:src/database/migrations/1665561241547-Init.ts
 export class Init1665561241547 implements MigrationInterface {
     name = 'Init1665561241547'
@@ -7,6 +8,10 @@ export class Init1665561241547 implements MigrationInterface {
 export class Init1664807249942 implements MigrationInterface {
     name = 'Init1664807249942'
 >>>>>>>> ae48a76 (fix: commit for git switch):src/database/migrations/1664807249942-Init.ts
+=======
+export class Init1665288557418 implements MigrationInterface {
+    name = 'Init1665288557418'
+>>>>>>> 742495b (draft commit):src/database/migrations/1665288557418-Init.ts
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -27,6 +32,7 @@ export class Init1664807249942 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+<<<<<<< HEAD:src/database/migrations/1664807249942-Init.ts
 <<<<<<<< HEAD:src/database/migrations/1665561241547-Init.ts
             CREATE TABLE "messages" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -40,10 +46,14 @@ export class Init1664807249942 implements MigrationInterface {
                 CONSTRAINT "PK_18325f38ae6de43878487eff986" PRIMARY KEY ("id")
 ========
             CREATE TABLE "conversations" (
+=======
+            CREATE TABLE "messages" (
+>>>>>>> 742495b (draft commit):src/database/migrations/1665288557418-Init.ts
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "isDeleted" boolean NOT NULL DEFAULT false,
+<<<<<<< HEAD:src/database/migrations/1664807249942-Init.ts
                 "title" character varying,
                 "description" character varying(5000),
                 "background" character varying DEFAULT 'white',
@@ -58,9 +68,13 @@ export class Init1664807249942 implements MigrationInterface {
                 "last_message_id" integer,
                 "mute" boolean NOT NULL DEFAULT false,
                 "block" boolean NOT NULL DEFAULT false,
+=======
+                "status" boolean NOT NULL DEFAULT false,
+                "message" character varying(255) NOT NULL,
+>>>>>>> 742495b (draft commit):src/database/migrations/1665288557418-Init.ts
                 "user_id" uuid,
                 "conversation_id" uuid,
-                CONSTRAINT "PK_3dad130078898b9325da36ab3db" PRIMARY KEY ("id")
+                CONSTRAINT "PK_18325f38ae6de43878487eff986" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -95,6 +109,7 @@ export class Init1664807249942 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+<<<<<<< HEAD:src/database/migrations/1664807249942-Init.ts
 <<<<<<<< HEAD:src/database/migrations/1665561241547-Init.ts
             CREATE TABLE "pet_photo" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -136,10 +151,18 @@ export class Init1664807249942 implements MigrationInterface {
                 "description" character varying,
                 "speciesId" uuid,
                 CONSTRAINT "PK_d01e9e7b4ada753c826720bee8b" PRIMARY KEY ("id")
+=======
+            CREATE TABLE "user_conversation" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "userId" uuid NOT NULL,
+                "conversationId" uuid NOT NULL,
+                CONSTRAINT "PK_3dad130078898b9325da36ab3db" PRIMARY KEY ("id")
+>>>>>>> 742495b (draft commit):src/database/migrations/1665288557418-Init.ts
             )
         `);
         await queryRunner.query(`
             CREATE TABLE "conversations" (
+<<<<<<< HEAD:src/database/migrations/1664807249942-Init.ts
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -160,25 +183,27 @@ export class Init1664807249942 implements MigrationInterface {
             ADD CONSTRAINT "FK_3bc55a7c3f9ed54b520bb5cfe23" FOREIGN KEY ("conversation_id") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
 ========
             CREATE TABLE "messages" (
+=======
+>>>>>>> 742495b (draft commit):src/database/migrations/1665288557418-Init.ts
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "isDeleted" boolean NOT NULL DEFAULT false,
-                "status" boolean NOT NULL DEFAULT false,
-                "message" character varying(255) NOT NULL,
-                "user_id" uuid,
-                "conversation_id" uuid,
-                CONSTRAINT "PK_18325f38ae6de43878487eff986" PRIMARY KEY ("id")
+                "title" character varying,
+                "description" character varying(5000),
+                "background" character varying DEFAULT 'white',
+                "emoji" character varying DEFAULT 'haha',
+                CONSTRAINT "PK_ee34f4f7ced4ec8681f26bf04ef" PRIMARY KEY ("id")
             )
 >>>>>>>> ae48a76 (fix: commit for git switch):src/database/migrations/1664807249942-Init.ts
         `);
         await queryRunner.query(`
-            ALTER TABLE "user_conversation"
-            ADD CONSTRAINT "FK_2b97367ea8ccd8e415681f8b0d7" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ALTER TABLE "messages"
+            ADD CONSTRAINT "FK_830a3c1d92614d1495418c46736" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "user_conversation"
-            ADD CONSTRAINT "FK_b312a0529c18723a53f7e90cd9d" FOREIGN KEY ("conversation_id") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ALTER TABLE "messages"
+            ADD CONSTRAINT "FK_3bc55a7c3f9ed54b520bb5cfe23" FOREIGN KEY ("conversation_id") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "profiles"
@@ -189,12 +214,12 @@ export class Init1664807249942 implements MigrationInterface {
             ADD CONSTRAINT "FK_5b7c03296b7da9206b6c7b054e1" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "messages"
-            ADD CONSTRAINT "FK_830a3c1d92614d1495418c46736" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ALTER TABLE "user_conversation"
+            ADD CONSTRAINT "FK_610e529db4ea61302bb83bf8d81" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "messages"
-            ADD CONSTRAINT "FK_3bc55a7c3f9ed54b520bb5cfe23" FOREIGN KEY ("conversation_id") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ALTER TABLE "user_conversation"
+            ADD CONSTRAINT "FK_a3e5e26b62e895c0478fb104bec" FOREIGN KEY ("conversationId") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "pet_photo"
@@ -208,6 +233,7 @@ export class Init1664807249942 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
+<<<<<<< HEAD:src/database/migrations/1664807249942-Init.ts
 <<<<<<<< HEAD:src/database/migrations/1665561241547-Init.ts
             ALTER TABLE "pets" DROP CONSTRAINT "FK_4c1b843bcdb26e564381bfed82a"
         `);
@@ -218,9 +244,12 @@ export class Init1664807249942 implements MigrationInterface {
             ALTER TABLE "informations" DROP CONSTRAINT "FK_e3ea9fa4c09723d0a35de03faa3"
 ========
             ALTER TABLE "messages" DROP CONSTRAINT "FK_3bc55a7c3f9ed54b520bb5cfe23"
+=======
+            ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_a3e5e26b62e895c0478fb104bec"
+>>>>>>> 742495b (draft commit):src/database/migrations/1665288557418-Init.ts
         `);
         await queryRunner.query(`
-            ALTER TABLE "messages" DROP CONSTRAINT "FK_830a3c1d92614d1495418c46736"
+            ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_610e529db4ea61302bb83bf8d81"
         `);
         await queryRunner.query(`
             ALTER TABLE "informations" DROP CONSTRAINT "FK_5b7c03296b7da9206b6c7b054e1"
@@ -230,13 +259,16 @@ export class Init1664807249942 implements MigrationInterface {
             ALTER TABLE "profiles" DROP CONSTRAINT "FK_9e432b7df0d182f8d292902d1a2"
         `);
         await queryRunner.query(`
-            ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_b312a0529c18723a53f7e90cd9d"
+            ALTER TABLE "messages" DROP CONSTRAINT "FK_3bc55a7c3f9ed54b520bb5cfe23"
         `);
         await queryRunner.query(`
-            ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_2b97367ea8ccd8e415681f8b0d7"
+            ALTER TABLE "messages" DROP CONSTRAINT "FK_830a3c1d92614d1495418c46736"
         `);
         await queryRunner.query(`
-            DROP TABLE "messages"
+            DROP TABLE "conversations"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "user_conversation"
         `);
         await queryRunner.query(`
             DROP TABLE "conversations"
@@ -257,6 +289,7 @@ export class Init1664807249942 implements MigrationInterface {
             DROP TABLE "profiles"
         `);
         await queryRunner.query(`
+<<<<<<< HEAD:src/database/migrations/1664807249942-Init.ts
             DROP TABLE "user_conversation"
         `);
         await queryRunner.query(`
@@ -265,6 +298,9 @@ export class Init1664807249942 implements MigrationInterface {
 ========
             DROP TABLE "conversations"
 >>>>>>>> ae48a76 (fix: commit for git switch):src/database/migrations/1664807249942-Init.ts
+=======
+            DROP TABLE "messages"
+>>>>>>> 742495b (draft commit):src/database/migrations/1665288557418-Init.ts
         `);
         await queryRunner.query(`
             DROP TABLE "users"

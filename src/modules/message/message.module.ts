@@ -6,7 +6,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConversationModule } from '../conversation/conversation.module';
 import { InformationModule } from '../information/information.module';
-import { UserConversationModule } from '../user-conversation/user-conversation.module';
 import { UserModule } from '../user/user.module';
 import { MessageController } from './message.controller';
 import { MessageGateway } from './message.gateway';
@@ -20,7 +19,6 @@ import { MessageService } from './message.service';
     UserModule,
     ConversationModule,
     InformationModule,
-    UserConversationModule,
   ],
   controllers: [MessageController],
   providers: [MessageService, MessageGateway],

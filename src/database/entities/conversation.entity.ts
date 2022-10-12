@@ -20,16 +20,16 @@ export class Conversation extends BaseEntity {
   @OneToMany(() => Message, (message) => message.conversation)
   messages?: Message[];
 
-  @OneToMany(
-    () => UserConversation,
-    (userConversation) => userConversation.conversation,
-  )
-  userConversation?: UserConversation[];
-
   @JoinTable({
-    name: 'user_conversation',
+    name: 'user-conversation',
     joinColumn: { name: 'conversation_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'user_id' },
   })
   users: User[];
+
+  @OneToMany(
+    () => UserConversation,
+    (userConversation) => userConversation.conversation,
+  )
+  public userConversations!: UserConversation[];
 }

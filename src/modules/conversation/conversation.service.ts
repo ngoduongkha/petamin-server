@@ -1,7 +1,8 @@
-import { Conversation } from '@entity';
+import { Conversation, UserConversation } from '@entity';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateConversationDto } from './dto/create-conversation.dto';
 
 @Injectable()
 export class ConversationService {
@@ -10,14 +11,22 @@ export class ConversationService {
   constructor(
     @InjectRepository(Conversation)
     private conversationRepository: Repository<Conversation>,
+    @InjectRepository(UserConversation)
+    private userConversationRepository: Repository<UserConversation>,
   ) {}
 
   async findAll(): Promise<Conversation[]> {
     return await this.conversationRepository.find();
   }
 
-  async create(inputs: Conversation): Promise<Conversation> {
-    return this.conversationRepository.create(inputs);
+  async create(dto: CreateConversationDto) {
+    const userConversations = dto.userIds.map((userId) => {
+      const entity = this.userConversationRepository.create({ userId });
+      return entity;
+    });
+    const entity = this.conversationRepository.create({ userConversations });
+
+    return await this.conversationRepository.save(entity)
   }
 
   async findById(id: string): Promise<Conversation> {

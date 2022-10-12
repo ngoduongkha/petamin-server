@@ -22,7 +22,7 @@ export class Information extends BaseEntity {
   @Column({ name: 'user_id', nullable: true })
   userId?: string;
 
-  @ManyToOne(() => User, (user) => user.messages)
+  @ManyToOne(() => User, (user) => user.information)
   @JoinColumn({ name: 'user_id' })
   user?: User;
 }
