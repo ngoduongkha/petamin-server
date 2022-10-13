@@ -13,6 +13,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
   ) {}
+
   async authentication(email: string, password: string): Promise<any> {
     const user = await this.userService.getUserByEmailAndGetPassword(email);
     const check = await argon.verify(user.password, password);
@@ -22,10 +23,6 @@ export class AuthService {
     }
 
     return user;
-  }
-
-  public getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 
   async create(dto: RegisterDto) {
@@ -38,8 +35,7 @@ export class AuthService {
     };
 
     return {
-      token: this.jwtService.sign(payload),
-      user,
+      accessToken: this.jwtService.sign(payload),
     };
   }
 
@@ -51,8 +47,7 @@ export class AuthService {
     };
 
     return {
-      token: this.jwtService.sign(payload),
-      user,
+      accessToken: this.jwtService.sign(payload),
     };
   }
 }

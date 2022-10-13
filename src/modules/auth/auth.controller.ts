@@ -8,12 +8,17 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from '../../database/entities';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
+import { LoginDto, LoginResponseDto, RegisterDto } from './dto';
 import { JwtGuard } from './guard/jwt.guard';
 import { LocalGuard } from './guard/local.guard';
 
@@ -29,12 +34,14 @@ export class AuthController {
   @UseGuards(LocalGuard)
   @HttpCode(200)
   @Post('/login')
+  @ApiOkResponse({ type: LoginResponseDto })
   login(@Request() req: { user: User }) {
     const { user } = req;
     return this.authService.login(user);
   }
 
   @ApiBody({ type: RegisterDto })
+  @ApiCreatedResponse({ type: LoginResponseDto })
   @Post('/register')
   async registerUser(@Body() dto: RegisterDto) {
     const check = this.userService.getUserByEmailAndGetPassword(dto.email);
@@ -46,10 +53,10 @@ export class AuthController {
     await this.authService.create(dto);
   }
 
-  @ApiResponse({ status: 200 })
+  @ApiOkResponse()
   @ApiBearerAuth('access-token')
   @UseGuards(JwtGuard)
-  @Get('/logout')
+  @Post('/logout')
   async logOut() {
     return { status: true };
   }

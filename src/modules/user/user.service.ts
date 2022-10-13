@@ -13,10 +13,6 @@ export class UserService {
     private readonly profileService: ProfileService,
   ) {}
 
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
-  }
-
   async getUserByEmailAndGetPassword(email: string) {
     return await this.userRepository.findOne({
       where: { email },
