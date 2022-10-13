@@ -1,11 +1,13 @@
-FROM node:16 AS builder
+FROM node:16-alpine AS builder
+RUN apk add g++ make python3
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY . ./
 RUN yarn build && npm prune --production
 
-FROM node:16 as runner
+FROM node:16-alpine as runner
+RUN apk add --no-cache --upgrade bash
 WORKDIR /app
 COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/node_modules /app/node_modules
