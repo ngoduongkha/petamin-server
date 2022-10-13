@@ -14,11 +14,11 @@ import { JwtService } from '@nestjs/jwt';
 import { ConversationService } from './modules/conversation/conversation.service';
 import { InformationService } from './modules/information/information.service';
 import { MessageService } from './modules/message/message.service';
-import { UserConversationService } from './modules/user-conversation/user-conversation.service';
 import { User } from '@entity';
 import { SaveInformationDto } from './modules/information/dto/save-infomation.dto';
 import { ETypeInformation } from './database/enums';
 import { MessagesInterface } from './modules/message/dto/message.dto';
+import { CreateConversationDto } from './modules/conversation/dto/create-conversation.dto';
 
 @UseGuards(WsGuard)
 @WebSocketGateway(3006, { cors: true })
@@ -33,7 +33,6 @@ export class AppGateway
     private conversationService: ConversationService,
     private informationService: InformationService,
     private messageService: MessageService,
-    private userConversationService: UserConversationService,
     private jwtService: JwtService,
   ) {}
 
@@ -43,9 +42,8 @@ export class AppGateway
 
   async handleConnection(client: Socket) {
     this.logger.log(client.id, 'Connected..............................');
-    console.log('client :>> ', client);
     const user = await this.getDataUserFromToken(client);
-
+    console.log('user :>> ', user);
     const information: SaveInformationDto = {
       userId: user.id,
       type: ETypeInformation.socketId,
@@ -89,21 +87,6 @@ export class AppGateway
       message: payload.message,
       conversationId: payload.conversationId,
     });
-
-    const dataUserConversation =
-      await this.userConversationService.findDataUserConversation(
-        message.userId,
-        message.conversationId,
-      );
-
-    const messageId =
-      typeof message.id === 'string' ? parseInt(message.id) : message.id;
-
-    await this.userConversationService.updateLastMessageId(
-      dataUserConversation.userId,
-      dataUserConversation.conversationId,
-      messageId,
-    );
 
     const emit = this.server;
     dataSocketId.map((value) => {
@@ -171,13 +154,10 @@ export class AppGateway
 
   async getDataUserFromToken(client: Socket): Promise<User> {
     const authToken: any = client.handshake?.query?.token;
-    console.log('authToken :>> ', authToken);
     try {
       const decoded = this.jwtService.verify(authToken);
-      console.log('decoded :>> ', decoded);
       return await this.userService.getUserByEmailAndGetPassword(decoded.email); // response to function
     } catch (ex) {
-      console.log('ex :>> ', ex);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
   }

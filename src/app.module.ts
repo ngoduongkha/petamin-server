@@ -8,7 +8,6 @@ import { UserModule } from './modules/user/user.module';
 import { ConversationModule } from './modules/conversation/conversation.module';
 import { InformationModule } from './modules/information/information.module';
 import { ProfileModule } from './modules/profile/profile.module';
-import { UserConversationModule } from './modules/user-conversation/user-conversation.module';
 import { MessagesModule } from './modules/message/message.module';
 import { PetModule } from './modules/pet/pet.module';
 import { SpeciesModule } from './modules/species/species.module';
@@ -23,7 +22,6 @@ import { SpeciesModule } from './modules/species/species.module';
     ConversationModule,
     InformationModule,
     ProfileModule,
-    UserConversationModule,
     MessagesModule,
     PetModule,
     SpeciesModule,

@@ -11,7 +11,6 @@ import {
   Column,
   Entity,
   JoinTable,
-  ManyToMany,
   OneToMany,
   OneToOne,
 } from 'typeorm';
@@ -47,14 +46,8 @@ export class User extends BaseEntity {
   })
   status: EUserStatus;
 
-  @OneToMany(
-    () => UserConversation,
-    (userConversation) => userConversation.user,
-  )
-  userConversation?: UserConversation[];
-
   @JoinTable({
-    name: 'user_conversation',
+    name: 'participants',
     joinColumn: { name: 'user_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'conversation_id' },
   })
@@ -70,6 +63,12 @@ export class User extends BaseEntity {
     eager: true,
   })
   information?: Information[];
+
+  @OneToMany(
+    () => UserConversation,
+    (userConversation) => userConversation.user,
+  )
+  userConversations!: UserConversation[];
 
   @BeforeInsert()
   async hashPassword() {

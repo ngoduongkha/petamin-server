@@ -25,6 +25,7 @@ export class InformationService {
   // }
 
   async create(inputs: SaveInformationDto): Promise<Information> {
+    console.log('inputs :>> ', inputs);
     return await this.informationRepository.save(inputs);
   }
 
@@ -63,13 +64,10 @@ export class InformationService {
   // }
 
   async deleteByValue(userId: string, value: string): Promise<boolean> {
-    const deleteResult = await this.informationRepository
-      .createQueryBuilder('i')
-      .innerJoin(() => User, 'u')
-      .where('u.id = :userId', { userId })
-      .andWhere('i.value = :value', { value })
-      .delete()
-      .execute();
+    const deleteResult = await this.informationRepository.delete({
+      userId,
+      value,
+    });
 
     if (deleteResult.affected) {
       return true;

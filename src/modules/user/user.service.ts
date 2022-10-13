@@ -1,5 +1,5 @@
 import { User } from '@entity';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
@@ -13,15 +13,27 @@ export class UserService {
     private readonly profileService: ProfileService,
   ) {}
 
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
-  }
-
   async getUserByEmailAndGetPassword(email: string) {
     return await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password'],
+      select: {
+        id: true,
+        email: true,
+        password: true,
+      },
     });
+  }
+
+  async findById(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (user) {
+      return user;
+    }
+
+    throw new BadRequestException('User not found');
   }
 
   async createUser(user: RegisterDto) {

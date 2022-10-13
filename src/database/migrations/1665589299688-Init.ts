@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Init1665561241547 implements MigrationInterface {
-    name = 'Init1665561241547'
+export class Init1665589299688 implements MigrationInterface {
+    name = 'Init1665589299688'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -35,17 +35,6 @@ export class Init1665561241547 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "user_conversation" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "last_message_id" integer,
-                "mute" boolean NOT NULL DEFAULT false,
-                "block" boolean NOT NULL DEFAULT false,
-                "user_id" uuid,
-                "conversation_id" uuid,
-                CONSTRAINT "PK_3dad130078898b9325da36ab3db" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
             CREATE TABLE "profiles" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -72,7 +61,7 @@ export class Init1665561241547 implements MigrationInterface {
                 "status" boolean NOT NULL DEFAULT false,
                 "type" character varying NOT NULL,
                 "value" character varying(255) NOT NULL,
-                "userId" uuid,
+                "user_id" uuid,
                 CONSTRAINT "PK_3e27903b20087cf4d880bb91ac3" PRIMARY KEY ("id")
             )
         `);
@@ -120,6 +109,14 @@ export class Init1665561241547 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+            CREATE TABLE "user_conversation" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "userId" uuid NOT NULL,
+                "conversationId" uuid NOT NULL,
+                CONSTRAINT "PK_3dad130078898b9325da36ab3db" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
             CREATE TABLE "conversations" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -141,20 +138,12 @@ export class Init1665561241547 implements MigrationInterface {
             ADD CONSTRAINT "FK_3bc55a7c3f9ed54b520bb5cfe23" FOREIGN KEY ("conversation_id") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "user_conversation"
-            ADD CONSTRAINT "FK_2b97367ea8ccd8e415681f8b0d7" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "user_conversation"
-            ADD CONSTRAINT "FK_b312a0529c18723a53f7e90cd9d" FOREIGN KEY ("conversation_id") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
             ALTER TABLE "profiles"
             ADD CONSTRAINT "FK_9e432b7df0d182f8d292902d1a2" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "informations"
-            ADD CONSTRAINT "FK_e3ea9fa4c09723d0a35de03faa3" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ADD CONSTRAINT "FK_5b7c03296b7da9206b6c7b054e1" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "pet_photo"
@@ -164,9 +153,23 @@ export class Init1665561241547 implements MigrationInterface {
             ALTER TABLE "pets"
             ADD CONSTRAINT "FK_4c1b843bcdb26e564381bfed82a" FOREIGN KEY ("speciesId") REFERENCES "species"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
+        await queryRunner.query(`
+            ALTER TABLE "user_conversation"
+            ADD CONSTRAINT "FK_610e529db4ea61302bb83bf8d81" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "user_conversation"
+            ADD CONSTRAINT "FK_a3e5e26b62e895c0478fb104bec" FOREIGN KEY ("conversationId") REFERENCES "conversations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+            ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_a3e5e26b62e895c0478fb104bec"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_610e529db4ea61302bb83bf8d81"
+        `);
         await queryRunner.query(`
             ALTER TABLE "pets" DROP CONSTRAINT "FK_4c1b843bcdb26e564381bfed82a"
         `);
@@ -174,16 +177,10 @@ export class Init1665561241547 implements MigrationInterface {
             ALTER TABLE "pet_photo" DROP CONSTRAINT "FK_c354ad85eba45246d750e0f4bf2"
         `);
         await queryRunner.query(`
-            ALTER TABLE "informations" DROP CONSTRAINT "FK_e3ea9fa4c09723d0a35de03faa3"
+            ALTER TABLE "informations" DROP CONSTRAINT "FK_5b7c03296b7da9206b6c7b054e1"
         `);
         await queryRunner.query(`
             ALTER TABLE "profiles" DROP CONSTRAINT "FK_9e432b7df0d182f8d292902d1a2"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_b312a0529c18723a53f7e90cd9d"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "user_conversation" DROP CONSTRAINT "FK_2b97367ea8ccd8e415681f8b0d7"
         `);
         await queryRunner.query(`
             ALTER TABLE "messages" DROP CONSTRAINT "FK_3bc55a7c3f9ed54b520bb5cfe23"
@@ -193,6 +190,9 @@ export class Init1665561241547 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "conversations"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "user_conversation"
         `);
         await queryRunner.query(`
             DROP TABLE "pets"
@@ -208,9 +208,6 @@ export class Init1665561241547 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "profiles"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "user_conversation"
         `);
         await queryRunner.query(`
             DROP TABLE "messages"
