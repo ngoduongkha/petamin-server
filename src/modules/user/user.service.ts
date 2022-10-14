@@ -3,6 +3,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
+import { ConversationService } from '../conversation/conversation.service';
 import { ProfileService } from '../profile/profile.service';
 
 @Injectable()

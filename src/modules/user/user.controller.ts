@@ -1,8 +1,9 @@
-import { User } from '@entity';
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Conversation, User } from '@entity';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { JwtGuard } from '../auth/guard/jwt.guard';
+import { ConversationService } from '../conversation/conversation.service';
 import { UserService } from './user.service';
 
 @ApiTags('user')
@@ -10,7 +11,10 @@ import { UserService } from './user.service';
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly conversationService: ConversationService,
+  ) {}
 
   // @Get('messages/:id/:status')
   // @UseInterceptors(ClassSerializerInterceptor)
@@ -23,22 +27,15 @@ export class UserController {
   //   return user;
   // }
 
-  // @Get('conversation/:id')
-  // async userConversation(@Param() params): Promise<UserEntity> {
-  //   const user = await this.usersService.findById(params.id, [
-  //     'profile',
-  //     'conversations',
-  //     'conversations.messages',
-  //   ]);
-  //   this.throwUserNotFound(user);
-  //   return user;
-  // }
-
-  // @Get('conversations')
-  // async getAllConversation(@Request() request): Promise<User | UserEntity> {
-  //   const user = await this.usersService.findAllConversations(request.user.id);
-  //   return user;
-  // }
+  @Get('conversations')
+  async getAllConversation(
+    @GetUser('id') userId: string,
+  ): Promise<Conversation[]> {
+    const conversations = await this.conversationService.findUserConversations(
+      userId,
+    );
+    return conversations;
+  }
 
   // @Post('/')
   // async create(@Body() inputs: CreateUserDto): Promise<UserEntity> {

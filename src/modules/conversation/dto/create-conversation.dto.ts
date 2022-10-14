@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateConversationDto {
-  @ApiProperty()
+  @ApiProperty({ type: String, format: 'uuid', isArray: true })
   @IsNotEmpty()
-  @IsUUID()
+  @IsUUID('all', { each: true })
   userIds: string[];
 }

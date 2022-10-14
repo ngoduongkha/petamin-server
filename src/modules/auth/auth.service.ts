@@ -29,9 +29,8 @@ export class AuthService {
     const user = await this.userService.createUserIfNotExist(dto);
 
     const payload: AuthPayload = {
-      name: user.name,
       email: user.email,
-      id: user.id,
+      userId: user.id,
     };
 
     return {
@@ -41,9 +40,8 @@ export class AuthService {
 
   async login(user: User) {
     const payload: AuthPayload = {
-      name: user.name,
       email: user.email,
-      id: user.id,
+      userId: user.id,
     };
 
     return {
