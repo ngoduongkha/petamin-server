@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   async create(dto: RegisterDto) {
-    const user = await this.userService.createUser(dto);
+    const user = await this.userService.createUserIfNotExist(dto);
 
     const payload: AuthPayload = {
       name: user.name,

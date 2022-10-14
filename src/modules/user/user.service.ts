@@ -19,7 +19,6 @@ export class UserService {
       select: {
         id: true,
         email: true,
-        password: true,
       },
     });
   }
@@ -36,8 +35,16 @@ export class UserService {
     throw new BadRequestException('User not found');
   }
 
-  async createUser(user: RegisterDto) {
-    const newUser = this.userRepository.create(user);
+  async createUserIfNotExist(registerDto: RegisterDto) {
+    const user = await this.userRepository.findOne({
+      where: { email: registerDto.email },
+    });
+
+    if (user) {
+      throw new BadRequestException('User already exists');
+    }
+
+    const newUser = this.userRepository.create(registerDto);
     const userCreated = await this.userRepository.save(newUser);
 
     await this.profileService.create(userCreated.id);
