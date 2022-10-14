@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -15,9 +15,8 @@ import { ProfileModule } from '../profile/profile.module';
 @Module({
   imports: [
     PassportModule,
-    TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync(jwtModuleAsyncOptions),
-    UserModule,
+    forwardRef(() => UserModule),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, LocalStrategy],

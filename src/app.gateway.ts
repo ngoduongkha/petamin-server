@@ -19,6 +19,7 @@ import { SaveInformationDto } from './modules/information/dto/save-infomation.dt
 import { ETypeInformation } from './database/enums';
 import { MessagesInterface } from './modules/message/dto/message.dto';
 import { CreateConversationDto } from './modules/conversation/dto/create-conversation.dto';
+import { AuthPayload } from './modules/auth/interfaces/auth-payload.interface';
 
 @UseGuards(WsGuard)
 @WebSocketGateway(3006, { cors: true })
@@ -42,24 +43,25 @@ export class AppGateway
 
   async handleConnection(client: Socket) {
     this.logger.log(client.id, 'Connected..............................');
-    const user = await this.getDataUserFromToken(client);
+    const { userId } = this.getAuthPayload(client);
     const information: SaveInformationDto = {
-      userId: user.id,
+      userId,
       type: ETypeInformation.socketId,
       status: false,
       value: client.id,
     };
 
     await this.informationService.create(information);
+    
     // need handle insert socketId to information table
-    // client.on('room', (room) => {
-    //   client.join(room);
-    // });
+    client.on('room', (room) => {
+      client.join(room);
+    });
   }
 
   async handleDisconnect(client: Socket) {
-    const user = await this.getDataUserFromToken(client);
-    await this.informationService.deleteByValue(user.id, client.id);
+    const { userId } = this.getAuthPayload(client);
+    await this.informationService.deleteByValue(userId, client.id);
 
     // need handle remove socketId to information table
     this.logger.log(client.id, 'Disconnect');
@@ -67,21 +69,23 @@ export class AppGateway
 
   @SubscribeMessage('messages')
   async messages(client: Socket, payload: MessagesInterface) {
+    const { userId } = this.getAuthPayload(client);
+
     const conversation = await this.conversationService.findById(
       payload.conversationId,
     );
 
-    const userId = [];
+    const userIds = [];
     conversation.users.map((user) => {
-      userId.push(user.id);
+      userIds.push(user.id);
 
       return user;
     });
 
-    const dataSocketId = await this.informationService.findSocketId(userId);
+    const dataSocketId = await this.informationService.findSocketId(userIds);
 
     const message = await this.messageService.create({
-      userId: payload.userId,
+      userId,
       status: false,
       message: payload.message,
       conversationId: payload.conversationId,
@@ -151,11 +155,11 @@ export class AppGateway
     //     io.sockets.socket(socketId).emit('message', 'this is a test');
   }
 
-  async getDataUserFromToken(client: Socket): Promise<User> {
+  getAuthPayload(client: Socket): AuthPayload {
     const authToken: string = client.handshake?.headers?.authorization;
     try {
       const decoded = this.jwtService.verify(authToken);
-      return await this.userService.getUserByEmailAndGetPassword(decoded.email);
+      return decoded;
     } catch (ex) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }

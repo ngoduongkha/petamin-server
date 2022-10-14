@@ -10,6 +10,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 import { JwtGuard } from '../auth/guard/jwt.guard';
 import { ConversationService } from './conversation.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
@@ -21,11 +22,6 @@ import { CreateConversationDto } from './dto/create-conversation.dto';
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
 
-  @Get('/')
-  async getAll() {
-    return this.conversationService.findAll();
-  }
-
   @Get('/:id')
   async getById(@Param('id') id: string): Promise<Conversation> {
     const conversation = await this.conversationService.findById(id);
@@ -34,8 +30,11 @@ export class ConversationController {
 
   @ApiBody({ type: CreateConversationDto })
   @Post('/')
-  async create(@Body() dto: CreateConversationDto) {
-    return await this.conversationService.create(dto);
+  async create(
+    @GetUser('id') userId: string,
+    @Body() dto: CreateConversationDto,
+  ) {
+    return await this.conversationService.create(userId, dto);
   }
 
   // @Put('/:id')

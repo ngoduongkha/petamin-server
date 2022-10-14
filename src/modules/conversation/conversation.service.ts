@@ -15,18 +15,28 @@ export class ConversationService {
     private userConversationRepository: Repository<UserConversation>,
   ) {}
 
-  async findAll(): Promise<Conversation[]> {
-    return await this.conversationRepository.find();
+  async findUserConversations(userId: string): Promise<Conversation[]> {
+    return await this.conversationRepository.find({
+      where: { users: { id: userId } },
+      relations: { users: true },
+    });
   }
 
-  async create(dto: CreateConversationDto) {
-    const userConversations = dto.userIds.map((userId) => {
+  async create(userId: string, dto: CreateConversationDto) {
+    const receiverConversations = dto.userIds.map((userId) => {
       const entity = this.userConversationRepository.create({ userId });
       return entity;
     });
-    const entity = this.conversationRepository.create({ userConversations });
 
-    return await this.conversationRepository.save(entity)
+    const senderConversation = this.userConversationRepository.create({
+      userId,
+    });
+
+    const conversation = this.conversationRepository.save({
+      userConversations: [senderConversation, ...receiverConversations],
+    });
+
+    return conversation;
   }
 
   async findById(id: string): Promise<Conversation> {
