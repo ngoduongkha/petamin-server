@@ -43,7 +43,6 @@ export class AppGateway
   async handleConnection(client: Socket) {
     this.logger.log(client.id, 'Connected..............................');
     const user = await this.getDataUserFromToken(client);
-    console.log('user :>> ', user);
     const information: SaveInformationDto = {
       userId: user.id,
       type: ETypeInformation.socketId,
@@ -153,10 +152,10 @@ export class AppGateway
   }
 
   async getDataUserFromToken(client: Socket): Promise<User> {
-    const authToken: any = client.handshake?.query?.token;
+    const authToken: string = client.handshake?.headers?.authorization;
     try {
       const decoded = this.jwtService.verify(authToken);
-      return await this.userService.getUserByEmailAndGetPassword(decoded.email); // response to function
+      return await this.userService.getUserByEmailAndGetPassword(decoded.email);
     } catch (ex) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }

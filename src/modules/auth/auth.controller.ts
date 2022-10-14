@@ -43,14 +43,10 @@ export class AuthController {
   @ApiBody({ type: RegisterDto })
   @ApiCreatedResponse({ type: LoginResponseDto })
   @Post('/register')
-  async registerUser(@Body() dto: RegisterDto) {
-    const check = this.userService.getUserByEmailAndGetPassword(dto.email);
+  async registerUser(@Body() dto: RegisterDto): Promise<LoginResponseDto> {
+    const { accessToken } = await this.authService.create(dto);
 
-    if (!check) {
-      throw new BadRequestException('User already exists');
-    }
-
-    await this.authService.create(dto);
+    return { accessToken };
   }
 
   @ApiOkResponse()
