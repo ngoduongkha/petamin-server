@@ -1,6 +1,6 @@
 import { User } from '@entity';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { EGender, EPosition } from '../enums';
+import { Gender } from '../enums';
 import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'profiles' })
@@ -19,19 +19,17 @@ export class Profile extends BaseEntity {
   @Column({ name: 'phone', nullable: true })
   phone: string;
 
-  @Column({ name: 'description', nullable: true })
-  description: string;
+  @Column({ name: 'bio', nullable: true })
+  bio: string;
 
-  @Column({ name: 'gender', nullable: true })
-  gender: EGender;
-
-  @Column({ name: 'position', nullable: true })
-  position: EPosition;
+  @Column({ name: 'gender', type: 'enum', enum: Gender, nullable: true })
+  gender: Gender;
 
   @Column({
     name: 'birthday',
     default: null,
     nullable: true,
+    type: 'timestamptz',
   })
   birthday: Date;
 

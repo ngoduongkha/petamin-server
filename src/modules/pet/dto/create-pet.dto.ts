@@ -6,7 +6,7 @@ import {
   IsNotEmpty,
   IsOptional,
 } from 'class-validator';
-import { EGender } from 'src/database/enums';
+import { Gender } from 'src/database/enums';
 
 export class CreatePetDto {
   @ApiProperty()
@@ -17,8 +17,8 @@ export class CreatePetDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsEnum(EGender)
-  gender: EGender;
+  @IsEnum(Gender)
+  gender: Gender;
 
   @ApiProperty()
   breed: string;

@@ -11,6 +11,7 @@ import { ProfileModule } from './modules/profile/profile.module';
 import { MessagesModule } from './modules/message/message.module';
 import { PetModule } from './modules/pet/pet.module';
 import { SpeciesModule } from './modules/species/species.module';
+import { MinioClientModule } from './modules/minio-client/minio-client.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SpeciesModule } from './modules/species/species.module';
     MessagesModule,
     PetModule,
     SpeciesModule,
+    MinioClientModule,
   ],
 })
 export class AppModule {}

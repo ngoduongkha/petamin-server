@@ -1,32 +1,67 @@
-
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
-import { EGender, EPosition } from 'src/database/enums';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsDate,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
+} from 'class-validator';
+import { Gender } from 'src/database/enums';
 
 export class UpdateProfileDto {
-  @ApiProperty()
-  avatar: string;
-
-  @ApiProperty()
+  @ApiPropertyOptional({
+    type: String,
+    example: '44 Su Thien An, thanh pho Rach Gia, tinh Kien Giang',
+    maxLength: 255,
+  })
+  @IsOptional()
+  @IsNotEmpty()
   address: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({
+    type: String,
+    example: '0842837917',
+    maxLength: 255,
+  })
+  @IsNotEmpty()
+  @IsOptional()
+  @IsPhoneNumber('VN')
   phone: string;
 
-  @ApiProperty()
-  description: string;
-
-  @ApiProperty()
+  @ApiPropertyOptional({
+    type: 'string',
+    example: 'I am a developer',
+    maxLength: 255,
+  })
+  @IsNotEmpty()
   @IsOptional()
-  @IsEnum(EGender)
-  gender: EGender;
+  bio: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({
+    enum: Gender,
+    example: Gender.FEMALE,
+  })
+  @IsNotEmpty()
   @IsOptional()
-  @IsEnum(EPosition)
-  position: EPosition;
+  @IsEnum(Gender)
+  gender: Gender;
 
-  @ApiProperty()
+  @ApiPropertyOptional({
+    type: Date,
+    example: new Date().toISOString(),
+    maxLength: 255,
+  })
+  @IsDateString()
+  @IsNotEmpty()
+  @IsOptional()
   birthday: Date;
 
+  @ApiPropertyOptional({
+    type: 'string',
+    format: 'binary',
+  })
+  @IsNotEmpty()
+  @IsOptional()
+  private image: any;
 }

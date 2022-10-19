@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { EGender } from '../enums/profile.enum';
+import { Gender } from '../enums';
 import { BaseEntity } from './base.entity';
 import { PetPhoto } from './pet-photo.entity';
 import { Species } from './species.entity';
@@ -18,7 +18,7 @@ export class Pet extends BaseEntity {
   age: number;
 
   @Column({ name: 'gender', nullable: true })
-  gender: EGender;
+  gender: Gender;
 
   @Column({ name: 'breed', nullable: true })
   breed: string;
