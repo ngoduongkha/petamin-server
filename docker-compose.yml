@@ -1,9 +1,9 @@
 version: '3.8'
-name: petamin
+name: petamin_dev
 services:
   petamin_postgres:
     image: postgres
-    container_name: petamin_postgres
+    container_name: petamin_postgres_dev
     ports:
       - 54321:5432
     healthcheck:
@@ -17,7 +17,7 @@ services:
       POSTGRES_DB: petamin
   petamin_minio:
     image: bitnami/minio:latest
-    container_name: petamin_minio
+    container_name: petamin_minio_dev
     ports:
       - 9000:9000
       - 9001:9001
@@ -27,8 +27,6 @@ services:
       timeout: 20s
       retries: 3
     environment:
-      MINIO_ACCESS_KEY: petamin
-      MINIO_SECRET_KEY: petamin
       MINIO_ROOT_USER: petamin-user
       MINIO_ROOT_PASSWORD: petamin-password
       MINIO_BROWSER: "on"

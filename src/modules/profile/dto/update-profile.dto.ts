@@ -12,6 +12,15 @@ import { Gender } from 'src/database/enums';
 export class UpdateProfileDto {
   @ApiPropertyOptional({
     type: String,
+    example: 'Kha',
+    maxLength: 50,
+  })
+  @IsOptional()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiPropertyOptional({
+    type: String,
     example: '44 Su Thien An, thanh pho Rach Gia, tinh Kien Giang',
     maxLength: 255,
   })

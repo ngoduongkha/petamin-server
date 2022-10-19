@@ -3,7 +3,7 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
-import { join } from 'path';
+import { resolve } from 'path';
 
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -17,10 +17,10 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       logging: process.env.DATABASE_LOGGING === 'true',
-      entities: [join(__dirname + '/../**/*.entity.{js,ts}')],
-      migrations: [join(__dirname + '/src/database/migrations/*{.ts,.js}')],
+      entities: [resolve(__dirname, '../database/entities/*.entity.{js,ts}')],
+      migrations: [resolve(__dirname, '../database/migrations/*.{js,ts}')],
       migrationsTableName: '__migrations',
-      synchronize: false,
+      synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
     };
   },
 };

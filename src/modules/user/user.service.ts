@@ -3,7 +3,6 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
-import { ConversationService } from '../conversation/conversation.service';
 import { ProfileService } from '../profile/profile.service';
 
 @Injectable()
@@ -38,6 +37,7 @@ export class UserService {
   }
 
   async createUserIfNotExist(registerDto: RegisterDto) {
+    console.log('registerDto :>> ', registerDto);
     const user = await this.userRepository.findOne({
       where: { email: registerDto.email },
     });
@@ -46,11 +46,13 @@ export class UserService {
       throw new BadRequestException('User already exists');
     }
 
-    const newUser = this.userRepository.create(registerDto);
+    const newUser = this.userRepository.create({
+      profile: { name: registerDto.name },
+      ...registerDto,
+    });
+    console.log('newUser :>> ', newUser);
     const userCreated = await this.userRepository.save(newUser);
-
-    await this.profileService.create(userCreated.id);
-
+    console.log('userCreated :>> ', userCreated);
     return userCreated;
   }
 }

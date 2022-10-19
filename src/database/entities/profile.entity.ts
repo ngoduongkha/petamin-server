@@ -10,6 +10,13 @@ export class Profile extends BaseEntity {
     Object.assign(this, partial);
   }
 
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    nullable: false,
+  })
+  name: string;
+
   @Column({ name: 'avatar', nullable: true })
   avatar: string;
 

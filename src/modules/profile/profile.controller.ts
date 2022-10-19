@@ -11,8 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { UpdateProfileDto } from './dto';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { GetProfileDto, UpdateProfileDto } from './dto';
 import { JwtGuard } from '../auth/guard/jwt.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { User } from '@entity';
@@ -27,7 +27,8 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get()
-  async getMe(@GetUser('id') userId: string) {
+  @ApiOkResponse({type: GetProfileDto})
+  async getMe(@GetUser('id') userId: string): Promise<GetProfileDto> {
     return await this.profileService.findByUserId(userId);
   }
 

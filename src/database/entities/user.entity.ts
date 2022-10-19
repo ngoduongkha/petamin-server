@@ -27,13 +27,6 @@ export class User extends BaseEntity {
   @Column({ unique: true, type: 'varchar' })
   email: string;
 
-  @Column({
-    name: 'name',
-    type: 'varchar',
-    nullable: false,
-  })
-  name: string;
-
   @Column({ type: 'text', select: false, nullable: false })
   password: string;
 
@@ -56,7 +49,7 @@ export class User extends BaseEntity {
   @OneToMany(() => Message, (message) => message.user)
   messages?: Message[];
 
-  @OneToOne(() => Profile, (profile) => profile.user)
+  @OneToOne(() => Profile, (profile) => profile.user, { cascade: true })
   profile: Profile;
 
   @OneToMany(() => Information, (information) => information.user, {

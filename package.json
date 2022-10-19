@@ -25,8 +25,7 @@
     "migration:generate": "f() { yarn build && yarn typeorm migration:generate -p -d ormconfig.ts \"./src/database/migrations/$@\"; }; f",
     "migration:create": "yarn typeorm migration:create src/database/migrations",
     "migration:run": "yarn typeorm migration:run -d ormconfig.ts",
-    "migration:run:prod": "typeorm migration:run -d dist/ormconfig.js",
-    "migration:sync": "yarn typeorm schema:sync -d ormconfig.ts",
+    "migration:sync": "yarn typeorm schema:sync -d dist/ormconfig.js",
     "migration:revert": "yarn typeorm -- migration:revert"
   },
   "dependencies": {

@@ -11,6 +11,7 @@ import { UpdateProfileDto } from './dto';
 import { UserService } from '../user/user.service';
 import { MinioClientService } from '../minio-client/minio-client.service';
 import { GetProfileDto } from './dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class ProfileService {
@@ -20,20 +21,22 @@ export class ProfileService {
     private minioClientService: MinioClientService,
   ) {}
 
-  async findAll() {
-    return await this.profileRepository.find({
-      where: {
-        isDeleted: false,
+  async findByUserId(userId: string): Promise<GetProfileDto> {
+    const profile = await this.profileRepository.findOne({
+      where: { userId },
+      relations: { user: true },
+    });
+
+    const response = plainToClass(
+      GetProfileDto,
+      {
+        email: profile.user.email,
+        ...profile,
       },
-    });
-  }
+      { excludeExtraneousValues: true },
+    );
 
-  async findByUserId(userId: string) {
-    const profile = await this.profileRepository.findOneBy({
-      userId: userId,
-    });
-
-    return profile;
+    return response;
   }
 
   async update(
@@ -72,13 +75,5 @@ export class ProfileService {
     }
 
     return await this.findByUserId(userId);
-  }
-
-  async create(userId: string): Promise<void> {
-    const profile: Partial<Profile> = {
-      userId: userId,
-    };
-
-    await this.profileRepository.save(profile);
   }
 }
