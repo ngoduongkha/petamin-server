@@ -37,7 +37,6 @@ export class UserService {
   }
 
   async createUserIfNotExist(registerDto: RegisterDto) {
-    console.log('registerDto :>> ', registerDto);
     const user = await this.userRepository.findOne({
       where: { email: registerDto.email },
     });
@@ -50,9 +49,9 @@ export class UserService {
       profile: { name: registerDto.name },
       ...registerDto,
     });
-    console.log('newUser :>> ', newUser);
+
     const userCreated = await this.userRepository.save(newUser);
-    console.log('userCreated :>> ', userCreated);
+
     return userCreated;
   }
 }

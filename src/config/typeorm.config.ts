@@ -16,11 +16,11 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      logging: process.env.DATABASE_LOGGING === 'true',
+      logging: process.env.DB_LOGGING === 'true',
       entities: [resolve(__dirname, '../database/entities/*.entity.{js,ts}')],
       migrations: [resolve(__dirname, '../database/migrations/*.{js,ts}')],
       migrationsTableName: '__migrations',
-      synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
+      synchronize: process.env.DB_SYNCHRONIZE === 'true',
     };
   },
 };

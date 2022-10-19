@@ -4,14 +4,12 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY . ./
-RUN yarn build && npm prune --production
+RUN yarn build
 
 FROM node:16-alpine as runner
-RUN apk add --no-cache --upgrade bash
 WORKDIR /app
-COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/node_modules /app/node_modules
-RUN rm -rf /app/dist/**/migrations/*.d.ts /app/dist/**/migrations/*.map
-COPY --from=builder /app/package.json /app/package.json
-COPY --from=builder /app/wait-for-it.sh /app/wait-for-it.sh
-RUN chmod +x wait-for-it.sh
+ENV NODE_ENV=production
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+COPY --from=builder /app/dist ./dist
+ENTRYPOINT [ "node", "dist/src/main.js" ]

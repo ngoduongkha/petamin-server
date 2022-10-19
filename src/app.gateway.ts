@@ -1,10 +1,13 @@
 import {
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsResponse,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { HttpException, HttpStatus, Logger, UseGuards } from '@nestjs/common';
@@ -22,10 +25,8 @@ import { CreateConversationDto } from './modules/conversation/dto/create-convers
 import { AuthPayload } from './modules/auth/interfaces/auth-payload.interface';
 
 @UseGuards(WsGuard)
-@WebSocketGateway(3006, { cors: true })
-export class AppGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+@WebSocketGateway(3006, { cors: { origin: '*' } })
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() private readonly server: Server;
   private readonly logger: Logger = new Logger('MessageGateway');
 
@@ -36,10 +37,6 @@ export class AppGateway
     private messageService: MessageService,
     private jwtService: JwtService,
   ) {}
-
-  afterInit(server: any): any {
-    this.logger.log(server, 'Init');
-  }
 
   async handleConnection(client: Socket) {
     this.logger.log(client.id, 'Connected..............................');
@@ -52,7 +49,7 @@ export class AppGateway
     };
 
     await this.informationService.create(information);
-    
+
     // need handle insert socketId to information table
     client.on('room', (room) => {
       client.join(room);
@@ -67,8 +64,14 @@ export class AppGateway
     this.logger.log(client.id, 'Disconnect');
   }
 
+  @SubscribeMessage('msgToServer')
+  handleEvent(@ConnectedSocket() client: Socket) {
+    console.log('1 :>> ', 1);
+  }
+
   @SubscribeMessage('messages')
   async messages(client: Socket, payload: MessagesInterface) {
+    this.logger.log(payload, 'Message');
     const { userId } = this.getAuthPayload(client);
 
     const conversation = await this.conversationService.findById(
