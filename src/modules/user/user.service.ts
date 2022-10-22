@@ -10,11 +10,10 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly profileService: ProfileService,
   ) {}
 
   async getUserByEmailAndGetPassword(email: string) {
-    return await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { email },
       select: {
         id: true,
@@ -22,6 +21,12 @@ export class UserService {
         password: true,
       },
     });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    return user;
   }
 
   async findById(id: string): Promise<User> {

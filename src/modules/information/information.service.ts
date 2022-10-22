@@ -1,7 +1,6 @@
 import { Information, User } from '@entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ETypeInformation } from 'src/database/enums';
 import { Repository } from 'typeorm';
 import { SaveInformationDto } from './dto/save-infomation.dto';
 
@@ -40,14 +39,14 @@ export class InformationService {
   //   );
   // }
 
-  async findSocketId(userId: string[]): Promise<Information[]> {
+  async findSocketId(userIds: string[]): Promise<Information[]> {
     const socketIds = await this.informationRepository
       .createQueryBuilder('i')
-      .innerJoin(() => User, 'u')
-      .where('u.id IN (:...userId)', { userId })
-      .andWhere('i.type = :type', { type: ETypeInformation.socketId })
+      .innerJoinAndSelect(User, 'u', 'u.id = i.userId')
+      .where('u.id IN (:...userIds)', { userIds })
       .getMany();
 
+    console.log('socketIds :>> ', socketIds);
     return socketIds;
   }
 

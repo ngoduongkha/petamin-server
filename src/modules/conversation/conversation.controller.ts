@@ -58,7 +58,7 @@ export class ConversationController {
     const conversation = await this.conversationService.findById(id);
 
     const userId: string[] = [];
-    conversation.users.map((user) => {
+    conversation.userConversations.map((user) => {
       userId.push(user.id);
       return user;
     });

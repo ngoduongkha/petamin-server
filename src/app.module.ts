@@ -8,16 +8,15 @@ import { UserModule } from './modules/user/user.module';
 import { ConversationModule } from './modules/conversation/conversation.module';
 import { InformationModule } from './modules/information/information.module';
 import { ProfileModule } from './modules/profile/profile.module';
-import { MessagesModule } from './modules/message/message.module';
 import { PetModule } from './modules/pet/pet.module';
 import { SpeciesModule } from './modules/species/species.module';
-import { MinioClientModule } from './modules/minio-client/minio-client.module';
+import { S3Module } from './modules/s3/s3.module';
+import { MessagesModule } from './modules/messages/messages.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ load: configurations, isGlobal: true }),
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
-    // TODO: refactor
     UserModule,
     AuthModule,
     ConversationModule,
@@ -26,7 +25,7 @@ import { MinioClientModule } from './modules/minio-client/minio-client.module';
     MessagesModule,
     PetModule,
     SpeciesModule,
-    MinioClientModule,
+    S3Module,
   ],
 })
 export class AppModule {}

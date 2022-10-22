@@ -14,7 +14,6 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
-import { EUserStatus } from '../enums';
 import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'users' })
@@ -29,15 +28,6 @@ export class User extends BaseEntity {
 
   @Column({ type: 'text', select: false, nullable: false })
   password: string;
-
-  @Column({
-    name: 'status',
-    type: 'enum',
-    enum: EUserStatus,
-    default: EUserStatus.INACTIVE,
-    nullable: false,
-  })
-  status: EUserStatus;
 
   @JoinTable({
     name: 'participants',

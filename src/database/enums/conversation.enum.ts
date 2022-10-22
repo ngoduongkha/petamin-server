@@ -1,11 +1,11 @@
-export enum EEmoji {
-  like = 'like',
-  heart = 'heart',
-  haha = 'haha',
+export enum Emoji {
+  LIKE = 'LIKE',
+  HEART = 'HEART',
+  HAHA = 'HAHA',
 }
 
-export enum EBackground {
-  white = 'white',
-  lavender = 'lavender',
-  green = 'green',
+export enum Background {
+  WHITE = 'WHITE',
+  LAVENDER = 'LAVENDER',
+  GREEN = 'GREEN',
 }

@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateMessage } from './dto/message.dto';
 
 @Injectable()
-export class MessageService {
+export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,

@@ -7,7 +7,6 @@ import {
   IsNumber,
   IsEnum,
 } from 'class-validator';
-import { ETypeInformation } from 'src/database/enums';
 
 export class SaveInformationDto {
   @IsNumber()
@@ -16,10 +15,6 @@ export class SaveInformationDto {
   @IsOptional()
   @IsBoolean()
   status: boolean | null;
-
-  @IsOptional()
-  @IsEnum(ETypeInformation)
-  type: ETypeInformation | null;
 
   @IsString()
   @MaxLength(255)

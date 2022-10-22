@@ -8,17 +8,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateProfileDto } from './dto';
-import { UserService } from '../user/user.service';
-import { MinioClientService } from '../minio-client/minio-client.service';
 import { GetProfileDto } from './dto';
 import { plainToClass } from 'class-transformer';
+import { S3Service } from '../s3/s3.service';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
-    private minioClientService: MinioClientService,
+    private s3Service: S3Service,
   ) {}
 
   async findByUserId(userId: string): Promise<GetProfileDto> {
@@ -45,7 +44,7 @@ export class ProfileService {
     image?: Express.Multer.File,
   ) {
     if (image) {
-      const { url: imageUrl } = await this.minioClientService.upload(image);
+      const { url: imageUrl } = await this.s3Service.uploadPublicFile(image);
       const updatedProfile = await this.profileRepository.update(
         {
           userId: userId,
