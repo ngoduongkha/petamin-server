@@ -3,6 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Pet } from '../../database/entities/pet.entity';
+import { S3Service } from '../s3/s3.service';
 import { PhotoDto } from './dto';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
@@ -15,19 +16,29 @@ export class PetService {
 
     @InjectRepository(PetPhoto)
     private petPhotoRepository: Repository<PetPhoto>,
-
+    private s3Service: S3Service,
     private dataSource: DataSource,
   ) {}
 
-  async create(createPetDto: CreatePetDto): Promise<Pet> {
+  async create(
+    createPetDto: CreatePetDto,
+    image: Express.Multer.File,
+  ): Promise<Pet> {
+    let imgUrl: string;
+    if (image) {
+      const { url } = await this.s3Service.uploadPublicFile(image);
+      imgUrl = url;
+    }
+
     const newPet: Pet = this.petRepository.create({
       ...createPetDto,
+      avatarUrl: imgUrl,
       species: {
         id: createPetDto.speciesId,
       },
     });
-    await this.petRepository.save(newPet);
-    return await this.getById(createPetDto.speciesId);
+    const petCreated = await this.petRepository.save(newPet);
+    return await this.getById(petCreated.id);
   }
 
   async findAll(): Promise<Pet[]> {
@@ -81,7 +92,7 @@ export class PetService {
   }
 
   async remove(petId: string): Promise<void> {
-    const isExist = await this.existPet(petId);
+    const isExist = await this.existsPet(petId);
     if (!isExist) return;
 
     await this.petRepository.update(
@@ -94,7 +105,7 @@ export class PetService {
     );
   }
 
-  async existPet(petId: string): Promise<boolean> {
+  async existsPet(petId: string): Promise<boolean> {
     const pet = await this.petRepository.findOne({
       where: {
         id: petId,
@@ -120,16 +131,22 @@ export class PetService {
     await Promise.all(deletedPhotos);
   }
 
-  async addPhotos(petId: string, photos: PhotoDto[]): Promise<void> {
-    const isExist = await this.existPet(petId);
+  async addPhotos(petId: string, images: Express.Multer.File[]): Promise<void> {
+    const isExist = await this.existsPet(petId);
 
     if (!isExist) {
-      throw new HttpException('Pet not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Pet is not found', HttpStatus.NOT_FOUND);
     }
 
-    const photosCreate: PetPhoto[] = photos.map((photo) => {
+    const imagesUpload = images.map(async (image) => {
+      return await this.s3Service.uploadPublicFile(image);
+    });
+
+    const imgUrls = await Promise.all(imagesUpload);
+
+    const photosCreate: PetPhoto[] = imgUrls.map(({ url }) => {
       return this.petPhotoRepository.create({
-        ...photo,
+        imgUrl: url,
         pet: {
           id: petId,
         },
@@ -140,7 +157,7 @@ export class PetService {
   }
 
   async getPetPhotos(petId: string): Promise<PetPhoto[]> {
-    const isExist = await this.existPet(petId);
+    const isExist = await this.existsPet(petId);
     if (!isExist) {
       throw new HttpException('Pet not found', HttpStatus.NOT_FOUND);
     }

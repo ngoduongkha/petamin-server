@@ -13,10 +13,10 @@ export class PetPhoto extends BaseEntity {
   imgUrl: string;
 
   @Column({ name: 'title', nullable: true })
-  title: string;
+  title?: string;
 
   @Column({ name: 'description', nullable: true })
-  description: string;
+  description?: string;
 
   @ManyToOne(() => Pet, (pet) => pet.photos)
   pet: Pet;

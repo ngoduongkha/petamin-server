@@ -4,14 +4,15 @@ import {
   Delete,
   Get,
   Param,
-  ParseArrayPipe,
   Patch,
   Post,
 } from '@nestjs/common';
+import { UploadedFile, UploadedFiles } from '@nestjs/common/decorators';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { PhotoDto } from './dto';
-import { CreatePetDto } from './dto/create-pet.dto';
-import { UpdatePetDto } from './dto/update-pet.dto';
+import { ApiFile } from 'src/common/decorators';
+import { ApiFiles } from 'src/common/decorators/api-files.decorator';
+import { imageFileFilter } from 'src/common/utils';
+import { CreatePetDto, UpdatePetDto } from './dto';
 import { PetService } from './pet.service';
 
 @ApiTags('pets')
@@ -20,8 +21,13 @@ export class PetController {
   constructor(private readonly petService: PetService) {}
 
   @Post()
-  create(@Body() createPetDto: CreatePetDto) {
-    return this.petService.create(createPetDto);
+  @ApiBody({ type: CreatePetDto })
+  @ApiFile('avatar', false, { fileFilter: imageFileFilter })
+  create(
+    @Body() createPetDto: CreatePetDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.petService.create(createPetDto, avatar);
   }
 
   @Get()
@@ -45,21 +51,14 @@ export class PetController {
   }
 
   @Post(':petId/photos')
-  @ApiBody({
-    isArray: true,
-    type: PhotoDto,
-  })
+  @ApiFiles('files', true)
   async addPhotos(
     @Param('petId') petId: string,
-    @Body(
-      new ParseArrayPipe({
-        items: PhotoDto,
-      }),
-    )
-    photos: PhotoDto[],
+    @UploadedFiles()
+    files: Array<Express.Multer.File>,
   ) {
-    await this.petService.addPhotos(petId, photos);
-    return true;
+    await this.petService.addPhotos(petId, files);
+    // return true;
   }
 
   @Get(':petId/photos')
@@ -73,7 +72,6 @@ export class PetController {
     @Body() photoIds: string[],
   ) {
     await this.petService.removePhotos(petId, photoIds);
-    return true;
     // return this.petService.remove(id);
   }
 }

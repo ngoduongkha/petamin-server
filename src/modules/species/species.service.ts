@@ -4,16 +4,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateSpeciesDto } from './dto/create-species.dto';
 import { UpdateSpeciesDto } from './dto/update-species.dto';
+import { S3Service } from '../s3/s3.service';
 
 @Injectable()
 export class SpeciesService {
   constructor(
     @InjectRepository(Species)
     private speciesRepository: Repository<Species>,
+    private s3Service: S3Service,
   ) {}
 
-  async create(createSpeciesDto: CreateSpeciesDto): Promise<Species> {
-    return await this.speciesRepository.save(createSpeciesDto);
+  async create(
+    createSpeciesDto: CreateSpeciesDto,
+    image?: Express.Multer.File,
+  ): Promise<Species> {
+    let imgUrl: string;
+    if (image) {
+      const { url } = await this.s3Service.uploadPublicFile(image);
+      imgUrl = url;
+    }
+
+    return await this.speciesRepository.save({ ...createSpeciesDto, imgUrl });
   }
 
   async findAll(): Promise<Species[]> {
@@ -41,15 +52,21 @@ export class SpeciesService {
   async update(
     id: string,
     updateSpeciesDto: UpdateSpeciesDto,
+    image?: Express.Multer.File,
   ): Promise<Species> {
     if (!this.existSpecies(id))
       throw new HttpException('This species not found', HttpStatus.NOT_FOUND);
 
+    let imgUrl: string;
+    if (image) {
+      const { url } = await this.s3Service.uploadPublicFile(image);
+      imgUrl = url;
+    }
     await this.speciesRepository.update(
       {
         id: id,
       },
-      updateSpeciesDto,
+      { ...updateSpeciesDto, imgUrl },
     );
 
     return await this.getById(id);

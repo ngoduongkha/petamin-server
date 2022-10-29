@@ -1,12 +1,26 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateSpeciesDto {
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+    example: 'Alaska',
+    maxLength: 50,
+  })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+    example: 'Alaska Species',
+    maxLength: 50,
+  })
   description: string;
 
-  @ApiProperty()
-  imgUrl: string;
+  @ApiPropertyOptional({
+    type: 'string',
+    format: 'binary',
+  })
+  @IsNotEmpty()
+  @IsOptional()
+  image: any;
 }

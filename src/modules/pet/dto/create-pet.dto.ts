@@ -1,9 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   isBoolean,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
 } from 'class-validator';
 import { Gender } from 'src/database/enums';
@@ -12,31 +14,51 @@ export class CreatePetDto {
   @ApiProperty()
   name: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
   age: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional({
+    enum: Gender,
+    example: Gender.FEMALE,
+  })
   @IsOptional()
   @IsEnum(Gender)
   gender: Gender;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsNotEmpty()
+  @IsOptional()
   breed: string;
 
-  @ApiProperty()
-  @IsBoolean()
+  @ApiPropertyOptional()
+  @Type(() => Boolean)
+  @IsNumber()
+  @IsOptional()
   isNeuter: boolean;
 
-  @ApiProperty()
-  avatarUrl: string;
-
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsNumber()
+  @IsOptional()
   weight: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsNotEmpty()
+  @IsOptional()
   speciesId: string;
+
+  @ApiPropertyOptional({
+    type: 'string',
+    format: 'binary',
+  })
+  @IsNotEmpty()
+  @IsOptional()
+  avatar: string;
 }
