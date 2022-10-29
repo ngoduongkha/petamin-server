@@ -1,4 +1,4 @@
-import { User } from '@entity';
+import { Conversation, User } from '@entity';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
@@ -10,16 +10,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly entityManager: EntityManager,
   ) {}
-
-  async getUserConversations(userId: string) {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: { conversations: true },
-    });
-
-    return user;
-  }
 
   async getUserByEmailAndGetPassword(email: string) {
     const user = await this.userRepository.findOne({
@@ -67,5 +59,17 @@ export class UserService {
     const userCreated = await this.userRepository.save(newUser);
 
     return userCreated;
+  }
+
+  async getUserConversation(userId: string) {
+    const conversation = await this.entityManager
+      .createQueryBuilder(Conversation, 'conversation')
+      .leftJoinAndSelect('conversation.userConversations', 'userConversation')
+      .leftJoinAndSelect('userConversation.user', 'user')
+      .leftJoinAndSelect('user.profile', 'profile')
+      .where('userConversation.userId = :userId', { userId })
+      .getMany();
+
+    return conversation;
   }
 }

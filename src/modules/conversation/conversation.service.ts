@@ -78,10 +78,6 @@ export class ConversationService {
     throw new BadRequestException('Conversation not found');
   }
 
-  // async update() {
-  //   return this.conversationRepository.update();
-  // }
-
   async deleteById(id: string): Promise<boolean> {
     const conversation = await this.findById(id);
 
@@ -95,7 +91,7 @@ export class ConversationService {
     throw new BadRequestException('Conversation not found');
   }
 
-  async agetUserConversations(userId: string): Promise<any> {
+  async getUserConversations(userId: string): Promise<any> {
     const conversations = await this.conversationRepository.find({
       where: { userConversations: { userId } },
       relations: {

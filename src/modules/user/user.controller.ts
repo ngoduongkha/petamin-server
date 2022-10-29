@@ -11,10 +11,7 @@ import { UserService } from './user.service';
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly conversationService: ConversationService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   // @Get('messages/:id/:status')
   // @UseInterceptors(ClassSerializerInterceptor)
@@ -29,9 +26,7 @@ export class UserController {
 
   @Get('conversations')
   async getAllConversation(@GetUser('id') userId: string) {
-    const conversations = await this.conversationService.getUserConversations(
-      userId,
-    );
+    const conversations = await this.userService.getUserConversation(userId);
     return conversations;
   }
 
