@@ -46,13 +46,17 @@ export class MessagesGateway
     });
 
     const dataSocketId = await this.informationService.findSocketId(userIds);
-
     const message = await this.messagesService.create({
       userId,
       status: false,
       message: payload.message,
       conversationId: payload.conversationId,
     });
+
+    await this.conversationService.updateLastMessageId(
+      payload.conversationId,
+      message.id,
+    );
 
     dataSocketId.map((value) => {
       this.server.to(value.value).emit('message-received', message);

@@ -1,5 +1,5 @@
 import { Conversation, User } from '@entity';
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'user_conversation' })
 export class UserConversation {

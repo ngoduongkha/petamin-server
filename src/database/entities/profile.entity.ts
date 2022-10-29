@@ -40,7 +40,7 @@ export class Profile extends BaseEntity {
   })
   birthday: Date;
 
-  @Column({ name: 'user_id', nullable: true })
+  @Column({ name: 'user_id', nullable: true, select: false })
   userId?: string;
 
   @OneToOne(() => User, (user) => user.profile)

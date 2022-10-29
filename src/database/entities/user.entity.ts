@@ -37,7 +37,6 @@ export class User extends BaseEntity {
   @OneToMany(
     () => UserConversation,
     (userConversation) => userConversation.user,
-    { eager: true },
   )
   userConversations?: UserConversation[];
 

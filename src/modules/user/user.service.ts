@@ -10,7 +10,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly entityManager: EntityManager,
   ) {}
 
   async getUserByEmailAndGetPassword(email: string) {
@@ -59,17 +58,5 @@ export class UserService {
     const userCreated = await this.userRepository.save(newUser);
 
     return userCreated;
-  }
-
-  async getUserConversation(userId: string) {
-    const conversation = await this.entityManager
-      .createQueryBuilder(Conversation, 'conversation')
-      .leftJoinAndSelect('conversation.userConversations', 'userConversation')
-      .leftJoinAndSelect('userConversation.user', 'user')
-      .leftJoinAndSelect('user.profile', 'profile')
-      .where('userConversation.userId = :userId', { userId })
-      .getMany();
-
-    return conversation;
   }
 }

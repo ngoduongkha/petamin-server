@@ -1,5 +1,13 @@
 import { Message, User, UserConversation } from '@entity';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { Background, Emoji } from '../enums';
 import { BaseEntity } from './base.entity';
 
@@ -34,4 +42,13 @@ export class Conversation extends BaseEntity {
     inverseJoinColumn: { name: 'user_id' },
   })
   users: User[];
+
+  @Column({ name: 'last_message_id', nullable: true })
+  lastMessageId: string;
+
+  @OneToOne(() => Message, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'last_message_id' })
+  lastMessage: Message;
 }

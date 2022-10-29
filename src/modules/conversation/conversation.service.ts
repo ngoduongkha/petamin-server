@@ -4,11 +4,12 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 
@@ -22,6 +23,7 @@ export class ConversationService {
     @InjectRepository(UserConversation)
     private readonly userConversationRepository: Repository<UserConversation>,
     private readonly userService: UserService,
+    private readonly entityManager: EntityManager,
   ) {}
 
   async findUserConversations(userId: string): Promise<Conversation[]> {
@@ -91,13 +93,34 @@ export class ConversationService {
     throw new BadRequestException('Conversation not found');
   }
 
+  async updateLastMessageId(conversationId: string, lastMessageId: string) {
+    const result = await this.conversationRepository.update(
+      {
+        id: conversationId,
+      },
+      {
+        lastMessageId,
+      },
+    );
+
+    if (result.affected === 0) {
+      throw new InternalServerErrorException('Conversation not found');
+    }
+  }
+
   async getUserConversations(userId: string): Promise<any> {
-    const conversations = await this.conversationRepository.find({
+    const conversationIds = await this.conversationRepository.find({
       where: { userConversations: { userId } },
+      select: { id: true },
+    });
+
+    const conversations = await this.conversationRepository.find({
+      where: { id: In(conversationIds.map((c) => c.id)) },
       relations: {
-        userConversations: {
-          user: true,
+        users: {
+          profile: true,
         },
+        lastMessage: true,
       },
     });
 
