@@ -1,9 +1,9 @@
 import { User } from '@entity';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
-import { ProfileService } from '../profile/profile.service';
+import { ConversationService } from '../conversation/conversation.service';
 
 @Injectable()
 export class UserService {
@@ -11,6 +11,15 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
+
+  async getUserConversations(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { conversations: true },
+    });
+
+    return user;
+  }
 
   async getUserByEmailAndGetPassword(email: string) {
     const user = await this.userRepository.findOne({

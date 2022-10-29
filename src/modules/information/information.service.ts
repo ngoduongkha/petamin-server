@@ -46,7 +46,6 @@ export class InformationService {
       .where('u.id IN (:...userIds)', { userIds })
       .getMany();
 
-    console.log('socketIds :>> ', socketIds);
     return socketIds;
   }
 

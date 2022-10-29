@@ -12,7 +12,7 @@ import { SpeciesService } from './species.service';
 import { CreateSpeciesDto } from './dto/create-species.dto';
 import { UpdateSpeciesDto } from './dto/update-species.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtGuard } from '../auth/guard/jwt.guard';
+import { JwtGuard } from '../../common/guard/jwt.guard';
 
 @ApiTags('species')
 // @ApiBearerAuth('access-token')

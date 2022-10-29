@@ -12,6 +12,7 @@ import { PetModule } from './modules/pet/pet.module';
 import { SpeciesModule } from './modules/species/species.module';
 import { S3Module } from './modules/s3/s3.module';
 import { MessagesModule } from './modules/messages/messages.module';
+import { AgoraModule } from './modules/agora/agora.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { MessagesModule } from './modules/messages/messages.module';
     PetModule,
     SpeciesModule,
     S3Module,
+    AgoraModule,
   ],
 })
 export class AppModule {}

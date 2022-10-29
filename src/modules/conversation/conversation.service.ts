@@ -1,6 +1,8 @@
 import { Conversation, UserConversation } from '@entity';
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -25,14 +27,17 @@ export class ConversationService {
   async findUserConversations(userId: string): Promise<Conversation[]> {
     const conversations = await this.conversationRepository.find({
       where: { userConversations: { userId } },
+      relations: {
+        userConversations: {
+          user: true,
+        },
+      },
     });
 
     return conversations;
   }
 
   async create(userId: string, dto: CreateConversationDto) {
-    // await this.userService.findById(dto.userIds[0]);
-
     await Promise.all(
       dto.userIds.map(async (userId) => {
         try {
@@ -52,7 +57,7 @@ export class ConversationService {
       userId,
     });
 
-    const conversation = this.conversationRepository.save({
+    const conversation = await this.conversationRepository.save({
       userConversations: [senderConversation, ...receiverConversations],
     });
 
@@ -62,6 +67,7 @@ export class ConversationService {
   async findById(id: string): Promise<Conversation> {
     const conversation = await this.conversationRepository.findOne({
       where: { id },
+      relations: { userConversations: true },
     });
 
     if (conversation) {
@@ -87,5 +93,18 @@ export class ConversationService {
 
     this.logger.warn('Tried to delete a conversation that does not exist');
     throw new BadRequestException('Conversation not found');
+  }
+
+  async agetUserConversations(userId: string): Promise<any> {
+    const conversations = await this.conversationRepository.find({
+      where: { userConversations: { userId } },
+      relations: {
+        userConversations: {
+          user: true,
+        },
+      },
+    });
+
+    return conversations;
   }
 }

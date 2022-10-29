@@ -11,6 +11,7 @@ import {
   Column,
   Entity,
   JoinTable,
+  ManyToMany,
   OneToMany,
   OneToOne,
 } from 'typeorm';
@@ -18,23 +19,11 @@ import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
-  constructor(patial: Partial<User>) {
-    super();
-    Object.assign(this, patial);
-  }
-
   @Column({ unique: true, type: 'varchar' })
   email: string;
 
   @Column({ type: 'text', select: false, nullable: false })
   password: string;
-
-  @JoinTable({
-    name: 'participants',
-    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'conversation_id' },
-  })
-  conversations: Conversation[];
 
   @OneToMany(() => Message, (message) => message.user)
   messages?: Message[];
@@ -42,16 +31,23 @@ export class User extends BaseEntity {
   @OneToOne(() => Profile, (profile) => profile.user, { cascade: true })
   profile: Profile;
 
-  @OneToMany(() => Information, (information) => information.user, {
-    eager: true,
-  })
+  @OneToMany(() => Information, (information) => information.user)
   information?: Information[];
 
   @OneToMany(
     () => UserConversation,
     (userConversation) => userConversation.user,
+    { eager: true },
   )
-  userConversations!: UserConversation[];
+  userConversations?: UserConversation[];
+
+  @ManyToMany(() => Conversation, (conversations) => conversations.users)
+  @JoinTable({
+    name: 'user_conversation',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'conversation_id' },
+  })
+  conversations: Conversation[];
 
   @BeforeInsert()
   async hashPassword() {

@@ -20,17 +20,18 @@ export class Conversation extends BaseEntity {
   @OneToMany(() => Message, (message) => message.conversation)
   messages?: Message[];
 
-  // @JoinTable({
-  //   name: 'user-conversation',
-  //   joinColumn: { name: 'conversation_id', referencedColumnName: 'id' },
-  //   inverseJoinColumn: { name: 'user_id' },
-  // })
-  // users: User[];
-
   @OneToMany(
     () => UserConversation,
     (userConversation) => userConversation.conversation,
-    { cascade: true, eager: true },
+    { cascade: ['insert'] },
   )
   userConversations!: UserConversation[];
+
+  @ManyToMany(() => User, (users) => users.conversations)
+  @JoinTable({
+    name: 'user_conversation',
+    joinColumn: { name: 'conversation_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id' },
+  })
+  users: User[];
 }

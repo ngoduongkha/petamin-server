@@ -12,10 +12,10 @@ import { ConversationService } from '../conversation/conversation.service';
 import { InformationService } from '../information/information.service';
 import { JwtService } from '@nestjs/jwt';
 import { SaveInformationDto } from '../information/dto/save-infomation.dto';
-import { AuthPayload } from '../auth/interfaces/auth-payload.interface';
+import { AuthPayload } from '../auth/interface/auth-payload.interface';
 import { UseGuards } from '@nestjs/common';
 import { MessagesService } from './messages.service';
-import { WsJwtGuard } from '../auth/guard';
+import { WsJwtGuard } from '../../common/guard';
 
 @UseGuards(WsJwtGuard)
 @WebSocketGateway({ cors: { origin: '*' } })

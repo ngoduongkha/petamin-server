@@ -19,8 +19,8 @@ import { User } from '../../database/entities';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoginDto, LoginResponseDto, RegisterDto } from './dto';
-import { JwtGuard } from './guard/jwt.guard';
-import { LocalGuard } from './guard/local.guard';
+import { JwtGuard } from '../../common/guard/jwt.guard';
+import { LocalGuard } from '../../common/guard/local.guard';
 
 @ApiTags('auth')
 @Controller('auth')

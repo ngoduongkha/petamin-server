@@ -10,8 +10,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { GetUser } from '../auth/decorators/get-user.decorator';
-import { JwtGuard } from '../auth/guard/jwt.guard';
+import { GetUser } from '../../common/decorators/get-user.decorator';
+import { JwtGuard } from '../../common/guard/jwt.guard';
 import { ConversationService } from './conversation.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 
@@ -58,9 +58,8 @@ export class ConversationController {
     const conversation = await this.conversationService.findById(id);
 
     const userId: string[] = [];
-    conversation.userConversations.map((user) => {
-      userId.push(user.id);
-      return user;
+    conversation.userConversations.map((room) => {
+      userId.push(room.userId);
     });
 
     return userId;
