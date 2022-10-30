@@ -66,11 +66,8 @@ export class UpdateProfileDto {
   @IsOptional()
   birthday: Date;
 
-  @ApiPropertyOptional({
-    type: 'string',
-    format: 'binary',
-  })
+  @ApiPropertyOptional()
   @IsNotEmpty()
   @IsOptional()
-  private image: any;
+  avatar: string;
 }

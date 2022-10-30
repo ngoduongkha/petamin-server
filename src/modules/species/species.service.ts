@@ -55,7 +55,7 @@ export class SpeciesService {
     return await this.getById(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     const isExist = await this.existSpecies(id);
     if (!isExist)
       throw new HttpException('This species not found', HttpStatus.NOT_FOUND);

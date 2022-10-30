@@ -15,19 +15,20 @@ export class PetService {
 
     @InjectRepository(PetPhoto)
     private petPhotoRepository: Repository<PetPhoto>,
-
-    private dataSource: DataSource,
   ) {}
 
-  async create(createPetDto: CreatePetDto): Promise<Pet> {
+  async create(createPetDto: CreatePetDto, ownerId: string): Promise<Pet> {
     const newPet: Pet = this.petRepository.create({
       ...createPetDto,
       species: {
         id: createPetDto.speciesId,
       },
+      user: {
+        id: ownerId,
+      },
     });
-    await this.petRepository.save(newPet);
-    return await this.getById(createPetDto.speciesId);
+    const { id: petId } = await this.petRepository.save(newPet);
+    return await this.getById(petId);
   }
 
   async findAll(): Promise<Pet[]> {
@@ -80,8 +81,8 @@ export class PetService {
     return await this.getById(petId);
   }
 
-  async remove(petId: string): Promise<void> {
-    const isExist = await this.existPet(petId);
+  async delete(petId: string): Promise<void> {
+    const isExist = await this.existsPet(petId);
     if (!isExist) return;
 
     await this.petRepository.update(
@@ -94,7 +95,7 @@ export class PetService {
     );
   }
 
-  async existPet(petId: string): Promise<boolean> {
+  async existsPet(petId: string): Promise<boolean> {
     const pet = await this.petRepository.findOne({
       where: {
         id: petId,
@@ -107,7 +108,7 @@ export class PetService {
     return false;
   }
 
-  async removePhotos(petId: string, photoIds: string[]): Promise<void> {
+  async deletePhotos(petId: string, photoIds: string[]): Promise<void> {
     const deletedPhotos = photoIds.map(async (id) => {
       return await this.petPhotoRepository.delete({
         id: id,
@@ -121,7 +122,7 @@ export class PetService {
   }
 
   async addPhotos(petId: string, photos: PhotoDto[]): Promise<void> {
-    const isExist = await this.existPet(petId);
+    const isExist = await this.existsPet(petId);
 
     if (!isExist) {
       throw new HttpException('Pet not found', HttpStatus.NOT_FOUND);
@@ -140,7 +141,7 @@ export class PetService {
   }
 
   async getPetPhotos(petId: string): Promise<PetPhoto[]> {
-    const isExist = await this.existPet(petId);
+    const isExist = await this.existsPet(petId);
     if (!isExist) {
       throw new HttpException('Pet not found', HttpStatus.NOT_FOUND);
     }

@@ -42,7 +42,7 @@ export class SpeciesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.speciesService.remove(id);
+  delete(@Param('id') id: string) {
+    return this.speciesService.delete(id);
   }
 }

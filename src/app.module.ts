@@ -13,6 +13,7 @@ import { SpeciesModule } from './modules/species/species.module';
 import { S3Module } from './modules/s3/s3.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { AgoraModule } from './modules/agora/agora.module';
+import { FileModule } from './modules/file/file.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AgoraModule } from './modules/agora/agora.module';
     SpeciesModule,
     S3Module,
     AgoraModule,
+    FileModule,
   ],
 })
 export class AppModule {}
