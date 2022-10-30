@@ -2,6 +2,7 @@ import {
   Conversation,
   Information,
   Message,
+  Pet,
   Profile,
   UserConversation,
 } from '@entity';
@@ -33,6 +34,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Information, (information) => information.user)
   information?: Information[];
+
+  @OneToMany(() => Pet, (pet) => pet.user)
+  pets?: Pet[];
 
   @OneToMany(
     () => UserConversation,

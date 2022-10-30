@@ -40,15 +40,11 @@ export class ProfileController {
   }
 
   @Patch()
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('image', { fileFilter: imageFileFilter }))
   @ApiBody({ type: UpdateProfileDto })
   async update(
     @GetUser('id') userId: string,
     @Body() updateProfileDto: UpdateProfileDto,
-    @UploadedFile()
-    file: Express.Multer.File,
   ) {
-    return this.profileService.update(userId, updateProfileDto, file);
+    return this.profileService.update(userId, updateProfileDto);
   }
 }

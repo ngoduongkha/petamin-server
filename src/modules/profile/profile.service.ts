@@ -38,30 +38,7 @@ export class ProfileService {
     return response;
   }
 
-  async update(
-    userId: string,
-    profile: UpdateProfileDto,
-    image?: Express.Multer.File,
-  ) {
-    if (image) {
-      const { url: imageUrl } = await this.s3Service.uploadPublicFile(image);
-      const updatedProfile = await this.profileRepository.update(
-        {
-          userId: userId,
-        },
-        {
-          ...profile,
-          avatar: imageUrl,
-        },
-      );
-
-      if (!updatedProfile.affected) {
-        throw new InternalServerErrorException('Update profile failed');
-      }
-
-      return await this.findByUserId(userId);
-    }
-
+  async update(userId: string, profile: UpdateProfileDto) {
     const updatedProfile = await this.profileRepository.update(
       {
         userId: userId,
