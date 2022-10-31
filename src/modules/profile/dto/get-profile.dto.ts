@@ -1,3 +1,4 @@
+import { User } from '@entity';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { Gender } from 'src/database/enums';
@@ -16,6 +17,9 @@ export class GetProfileDto {
     example: 'kha@gmail.com',
   })
   email: string;
+
+  @ApiResponseProperty()
+  followers: User[];
 
   @Expose()
   @ApiResponseProperty({

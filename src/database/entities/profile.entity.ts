@@ -46,4 +46,10 @@ export class Profile extends BaseEntity {
   @OneToOne(() => User, (user) => user.profile)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column({ name: 'total_followers', nullable: false, default: 0 })
+  totalFollowers: number;
+
+  @Column({ name: 'total_followings', nullable: false, default: 0 })
+  totalFollowings: number;
 }

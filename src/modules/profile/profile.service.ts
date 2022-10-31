@@ -52,4 +52,28 @@ export class ProfileService {
 
     return await this.findByUserId(userId);
   }
+
+  async updateTotalFollowers(
+    userId: string,
+    totalFollowers: number,
+  ): Promise<void> {
+    await this.profileRepository.update(
+      { userId },
+      {
+        totalFollowers,
+      },
+    );
+  }
+
+  async updateTotalFollowings(
+    userId: string,
+    totalFollowings: number,
+  ): Promise<void> {
+    await this.profileRepository.update(
+      { userId },
+      {
+        totalFollowings,
+      },
+    );
+  }
 }

@@ -14,6 +14,7 @@ import { S3Module } from './modules/s3/s3.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { AgoraModule } from './modules/agora/agora.module';
 import { FileModule } from './modules/file/file.module';
+import { FollowsModule } from './modules/follows/follows.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FileModule } from './modules/file/file.module';
     S3Module,
     AgoraModule,
     FileModule,
+    FollowsModule,
   ],
 })
 export class AppModule {}
