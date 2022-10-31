@@ -8,6 +8,7 @@ import {
 } from '@entity';
 import * as argon from 'argon2';
 import {
+  AfterLoad,
   BeforeInsert,
   Column,
   Entity,
@@ -17,6 +18,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { Follows } from './follows.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -43,6 +45,12 @@ export class User extends BaseEntity {
     (userConversation) => userConversation.user,
   )
   userConversations?: UserConversation[];
+
+  @OneToMany(() => Follows, (follows) => follows.user)
+  followings?: Follows[];
+
+  @OneToMany(() => Follows, (follows) => follows.follower)
+  followers?: Follows[];
 
   @ManyToMany(() => Conversation, (conversations) => conversations.users)
   @JoinTable({

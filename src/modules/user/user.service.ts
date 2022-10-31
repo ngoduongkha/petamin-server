@@ -1,4 +1,5 @@
 import { Conversation, User } from '@entity';
+import { Follows } from '@entity/follows.entity';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';

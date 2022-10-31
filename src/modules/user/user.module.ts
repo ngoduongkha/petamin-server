@@ -6,6 +6,7 @@ import { User } from '@entity';
 import { ProfileModule } from '../profile/profile.module';
 import { ConversationModule } from '../conversation/conversation.module';
 
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
