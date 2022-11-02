@@ -1,3 +1,4 @@
+import { Max, Min } from 'class-validator';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Gender } from '../enums';
 import { BaseEntity } from './base.entity';
@@ -15,8 +16,14 @@ export class Pet extends BaseEntity {
   @Column({ name: 'name', nullable: true })
   name: string;
 
-  @Column({ name: 'age', nullable: true })
-  age: number;
+  @Column({ name: 'month', nullable: true, default: 0 })
+  @Min(0)
+  @Max(11)
+  month: number;
+
+  @Column({ name: 'year', nullable: true, default: 0 })
+  @Min(0)
+  year: number;
 
   @Column({ name: 'gender', nullable: true })
   gender: Gender;
