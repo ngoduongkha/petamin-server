@@ -1,5 +1,7 @@
+import { Type } from 'class-transformer';
 import { Max, Min } from 'class-validator';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { ColumnNumericTransformer } from 'src/common/transformers/column-numeric.transformer';
+import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Gender } from '../enums';
 import { BaseEntity } from './base.entity';
 import { PetPhoto } from './pet-photo.entity';
@@ -43,6 +45,7 @@ export class Pet extends BaseEntity {
     type: 'decimal',
     precision: 3,
     scale: 1,
+    transformer: new ColumnNumericTransformer(),
   })
   weight: number;
 
