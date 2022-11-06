@@ -38,6 +38,7 @@ export class PetService {
       },
       relations: {
         species: true,
+        photos: true,
       },
     });
   }
@@ -49,6 +50,7 @@ export class PetService {
       },
       relations: {
         species: true,
+        photos: true,
       },
     });
 

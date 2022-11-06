@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { Max, Min } from 'class-validator';
-import { ColumnNumericTransformer } from 'src/common/transformers/column-numeric.transformer';
+import { ColumnDecimalTransformer } from 'src/common/transformers/column-decimal.transformer';
 import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Gender } from '../enums';
 import { BaseEntity } from './base.entity';
@@ -45,12 +45,15 @@ export class Pet extends BaseEntity {
     type: 'decimal',
     precision: 3,
     scale: 1,
-    transformer: new ColumnNumericTransformer(),
+    transformer: new ColumnDecimalTransformer(),
   })
   weight: number;
 
   @Column({ name: 'description', nullable: true })
   description: string;
+
+  @Column({ name: 'is_adopting', nullable: true, default: false })
+  isAdopting: boolean;
 
   @ManyToOne(() => Species, (species) => species.pets)
   species?: Species;
