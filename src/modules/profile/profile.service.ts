@@ -1,23 +1,15 @@
 import { Profile } from '@entity';
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { UpdateProfileDto } from './dto';
-import { GetProfileDto } from './dto';
 import { plainToClass } from 'class-transformer';
-import { S3Service } from '../s3/s3.service';
+import { Repository } from 'typeorm';
+import { GetProfileDto, UpdateProfileDto } from './dto';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
-    private s3Service: S3Service,
   ) {}
 
   async findByUserId(userId: string): Promise<GetProfileDto> {

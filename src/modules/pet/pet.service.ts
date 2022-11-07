@@ -157,4 +157,24 @@ export class PetService {
       },
     });
   }
+
+  async isAdopting(petId: string): Promise<boolean> {
+    const pet = await this.petRepository.findOneBy({ id: petId });
+
+    return pet.isAdopting;
+  }
+
+  async changeAdoptionStatus(
+    petId: string,
+    adoptionStatus: boolean,
+  ): Promise<void> {
+    await this.petRepository.update(
+      {
+        id: petId,
+      },
+      {
+        isAdopting: adoptionStatus,
+      },
+    );
+  }
 }

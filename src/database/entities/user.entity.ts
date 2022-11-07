@@ -1,4 +1,5 @@
 import {
+  Adoption,
   Conversation,
   Information,
   Message,
@@ -51,6 +52,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Follows, (follows) => follows.follower)
   followers?: Follows[];
+
+  @OneToMany(() => Adoption, (adoption) => adoption.user)
+  adoptions?: Adoption[];
 
   @ManyToMany(() => Conversation, (conversations) => conversations.users)
   @JoinTable({

@@ -12,5 +12,6 @@ import { PetService } from './pet.service';
   ],
   controllers: [PetController],
   providers: [PetService],
+  exports: [PetService],
 })
 export class PetModule {}
