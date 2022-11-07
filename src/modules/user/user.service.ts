@@ -1,10 +1,8 @@
-import { Conversation, User } from '@entity';
-import { Follows } from '@entity/follows.entity';
+import { User } from '@entity';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
-import { ConversationService } from '../conversation/conversation.service';
 
 @Injectable()
 export class UserService {
