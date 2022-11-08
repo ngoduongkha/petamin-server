@@ -30,6 +30,7 @@ export class ProfileService {
       GetProfileDto,
       {
         email: profile.user.email,
+        userId: profile.user.id,
         ...profile,
       },
       { excludeExtraneousValues: true },

@@ -9,6 +9,13 @@ export class GetProfileDto {
     type: String,
     example: 'Kha',
   })
+  userId: string;
+
+  @Expose()
+  @ApiResponseProperty({
+    type: String,
+    example: 'Kha',
+  })
   name: string;
 
   @Expose()
@@ -17,9 +24,6 @@ export class GetProfileDto {
     example: 'kha@gmail.com',
   })
   email: string;
-
-  @ApiResponseProperty()
-  followers: User[];
 
   @Expose()
   @ApiResponseProperty({
@@ -61,4 +65,18 @@ export class GetProfileDto {
     type: 'string',
   })
   avatar: string;
+
+  @Expose()
+  @ApiResponseProperty({
+    type: Number,
+    example: 0,
+  })
+  totalFollowers: number;
+
+  @Expose()
+  @ApiResponseProperty({
+    type: Number,
+    example: 0,
+  })
+  totalFollowings: number;
 }
