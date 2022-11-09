@@ -7,7 +7,6 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { MessagesInterface } from './dto/message.dto';
 import { ConversationService } from '../conversation/conversation.service';
 import { InformationService } from '../information/information.service';
 import { JwtService } from '@nestjs/jwt';
@@ -16,6 +15,8 @@ import { AuthPayload } from '../auth/interface/auth-payload.interface';
 import { UseGuards } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { WsJwtGuard } from '../../common/guard';
+import { MessageSocketEvent } from './events/message-socket-event';
+import { SendMessageDto, TypingMessageDto } from './dto';
 
 @UseGuards(WsJwtGuard)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -32,7 +33,7 @@ export class MessagesGateway
   ) {}
 
   @SubscribeMessage('messages')
-  async messages(client: Socket, payload: MessagesInterface) {
+  async messages(client: Socket, payload: SendMessageDto) {
     const { userId } = await this.getAuthPayload(client);
 
     const conversation = await this.conversationService.findById(
@@ -48,7 +49,7 @@ export class MessagesGateway
     const dataSocketId = await this.informationService.findSocketId(userIds);
     const message = await this.messagesService.create({
       userId,
-      status: false,
+      type: payload.type,
       message: payload.message,
       conversationId: payload.conversationId,
     });
@@ -94,5 +95,28 @@ export class MessagesGateway
     } catch (ex) {
       throw new WsException('Invalid token');
     }
+  }
+
+  @SubscribeMessage(MessageSocketEvent.MESSAGE_TYPING)
+  async messageTyping(client: Socket, payload: TypingMessageDto) {
+    const { userId } = await this.getAuthPayload(client);
+
+    const conversation = await this.conversationService.findById(
+      payload.conversationId,
+    );
+
+    const userIds = conversation.userConversations.map((userConversation) => {
+      if (userConversation.userId !== userId) {
+        return userConversation.userId;
+      }
+    });
+
+    const dataSocketId = await this.informationService.findSocketId(userIds);
+
+    dataSocketId.map((value) => {
+      this.server
+        .to(value.value)
+        .emit(MessageSocketEvent.MESSAGE_TYPING, payload);
+    });
   }
 }

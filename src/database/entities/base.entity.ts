@@ -11,7 +11,7 @@ export abstract class IdentityEntity {
 }
 
 export abstract class BaseEntity extends IdentityEntity {
-  @CreateDateColumn({ name: 'created_at', select: false })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at', select: false })

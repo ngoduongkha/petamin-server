@@ -5,7 +5,7 @@ import { Gender } from '../enums';
 export default setSeederFactory(User, (faker) => {
   const user = new User({
     email: faker.internet.email(),
-    password: faker.internet.password(),
+    password: '12345678',
     profile: new Profile({
       name: faker.name.fullName(),
       avatar: faker.image.avatar(),

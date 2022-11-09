@@ -27,8 +27,11 @@ export class AdoptionController {
   constructor(private readonly adoptionService: AdoptionService) {}
 
   @Post()
-  create(@Body() createAdoptDto: CreateAdoptionDto) {
-    return this.adoptionService.create(createAdoptDto);
+  create(
+    @GetUser('id') userId: string,
+    @Body() createAdoptDto: CreateAdoptionDto,
+  ) {
+    return this.adoptionService.create(userId, createAdoptDto);
   }
 
   @Get()
@@ -39,6 +42,11 @@ export class AdoptionController {
   @Get('/me')
   findByMe(@GetUser('id') userId: string) {
     return this.adoptionService.findByUserId(userId);
+  }
+
+  @Get('/pet/:petId')
+  findByPetId(@Param('petId') petId: string) {
+    return this.adoptionService.findByPetId(petId);
   }
 
   // @Get(':id')

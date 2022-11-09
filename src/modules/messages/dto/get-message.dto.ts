@@ -1,21 +1,16 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { PaginateQuery } from 'nestjs-paginate';
 
-export class GetUserDto implements PaginateQuery {
+export class GetMessageDto implements PaginateQuery {
   @ApiProperty({ type: Number })
   page: number;
 
   @ApiProperty({ type: Number })
   limit: number;
 
-  searchBy?: string[];
-
   sortBy?: [string, string][];
-
-  @ApiPropertyOptional({ type: String })
+  searchBy?: string[];
   search?: string;
-
   filter?: { [column: string]: string | string[] };
-
   path: string;
 }

@@ -18,7 +18,7 @@ export class AdoptionService {
     private petService: PetService,
   ) {}
 
-  async create(createAdoptionDto: CreateAdoptionDto) {
+  async create(userId: string, createAdoptionDto: CreateAdoptionDto) {
     const isAdopting = await this.petService.isAdopting(
       createAdoptionDto.petId,
     );
@@ -26,6 +26,7 @@ export class AdoptionService {
       throw new InternalServerErrorException('This pet is already adoption');
 
     const adoption = this.adoptionRepository.create({
+      userId,
       ...createAdoptionDto,
       status: AdoptionStatus.SHOW,
       pet: {
@@ -84,6 +85,15 @@ export class AdoptionService {
     });
 
     return adoptions;
+  }
+
+  async findByPetId(petId: string): Promise<Adoption> {
+    const adoption = await this.adoptionRepository.findOneBy({
+      petId,
+      isDeleted: false,
+    });
+
+    return adoption;
   }
 
   async update(

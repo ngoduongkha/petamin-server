@@ -9,7 +9,6 @@ import {
 } from '@entity';
 import * as argon from 'argon2';
 import {
-  AfterLoad,
   BeforeInsert,
   Column,
   Entity,

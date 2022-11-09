@@ -54,7 +54,7 @@ export class Pet extends BaseEntity {
   @Column({ name: 'description', nullable: true })
   description: string;
 
-  @Column({ name: 'is_adopting', nullable: true, default: false })
+  @Column({ name: 'is_adopting', default: false })
   isAdopting: boolean;
 
   @Column({ name: 'species', enum: Species, type: 'enum' })

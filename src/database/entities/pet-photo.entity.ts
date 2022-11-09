@@ -4,11 +4,6 @@ import { Pet } from './pet.entity';
 
 @Entity({ name: 'pet_photo' })
 export class PetPhoto extends BaseEntity {
-  constructor(partial: Partial<PetPhoto>) {
-    super();
-    Object.assign(this, partial);
-  }
-
   @Column({ name: 'img_url', nullable: true })
   imgUrl: string;
 
