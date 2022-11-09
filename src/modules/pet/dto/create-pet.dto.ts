@@ -9,7 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Gender } from 'src/database/enums';
+import { Gender, Species } from 'src/database/enums';
 
 export class CreatePetDto {
   @ApiProperty({ required: true })
@@ -61,8 +61,7 @@ export class CreatePetDto {
   @IsOptional()
   description: string;
 
-  @ApiPropertyOptional()
-  @IsNotEmpty()
+  @ApiPropertyOptional({ type: Species, enum: Species, example: Species.DOG })
   @IsOptional()
-  speciesId: string;
+  species: Species;
 }

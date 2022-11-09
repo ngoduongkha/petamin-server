@@ -3,9 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Pet } from '../../database/entities/pet.entity';
-import { PhotoDto } from './dto';
-import { CreatePetDto } from './dto/create-pet.dto';
-import { UpdatePetDto } from './dto/update-pet.dto';
+import { PhotoDto, CreatePetDto, UpdatePetDto } from './dto';
 
 @Injectable()
 export class PetService {
@@ -20,9 +18,6 @@ export class PetService {
   async create(createPetDto: CreatePetDto, ownerId: string): Promise<Pet> {
     const newPet: Pet = this.petRepository.create({
       ...createPetDto,
-      species: {
-        id: createPetDto.speciesId,
-      },
       user: {
         id: ownerId,
       },
@@ -66,11 +61,6 @@ export class PetService {
   async update(petId: string, updatePetDto: UpdatePetDto): Promise<Pet> {
     const updatedPet: Pet = this.petRepository.create({
       ...updatePetDto,
-      species: updatePetDto.speciesId
-        ? {
-            id: updatePetDto.speciesId,
-          }
-        : undefined,
     });
 
     await this.petRepository.update(

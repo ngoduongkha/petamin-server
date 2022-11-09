@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
-import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 dotenv.config({
@@ -21,4 +20,4 @@ const postgresConnectionOptions: PostgresConnectionOptions = {
   synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
 };
 
-export default new DataSource(postgresConnectionOptions);
+export default postgresConnectionOptions;

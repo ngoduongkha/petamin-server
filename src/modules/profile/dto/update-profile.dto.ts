@@ -1,9 +1,7 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsDate,
   IsDateString,
   IsEnum,
-  IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
 } from 'class-validator';
@@ -16,7 +14,6 @@ export class UpdateProfileDto {
     maxLength: 50,
   })
   @IsOptional()
-  @IsNotEmpty()
   name: string;
 
   @ApiPropertyOptional({
@@ -25,7 +22,6 @@ export class UpdateProfileDto {
     maxLength: 255,
   })
   @IsOptional()
-  @IsNotEmpty()
   address: string;
 
   @ApiPropertyOptional({
@@ -33,7 +29,6 @@ export class UpdateProfileDto {
     example: '0842837917',
     maxLength: 255,
   })
-  @IsNotEmpty()
   @IsOptional()
   @IsPhoneNumber('VN')
   phone: string;
@@ -43,7 +38,6 @@ export class UpdateProfileDto {
     example: 'I am a developer',
     maxLength: 255,
   })
-  @IsNotEmpty()
   @IsOptional()
   bio: string;
 
@@ -51,7 +45,6 @@ export class UpdateProfileDto {
     enum: Gender,
     example: Gender.FEMALE,
   })
-  @IsNotEmpty()
   @IsOptional()
   @IsEnum(Gender)
   gender: Gender;
@@ -62,12 +55,10 @@ export class UpdateProfileDto {
     maxLength: 255,
   })
   @IsDateString()
-  @IsNotEmpty()
   @IsOptional()
   birthday: Date;
 
   @ApiPropertyOptional()
-  @IsNotEmpty()
   @IsOptional()
   avatar: string;
 }

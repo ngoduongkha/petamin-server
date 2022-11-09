@@ -2,20 +2,14 @@ import { Type } from 'class-transformer';
 import { Max, Min } from 'class-validator';
 import { ColumnDecimalTransformer } from 'src/common/transformers/column-decimal.transformer';
 import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Gender } from '../enums';
 import { Adoption } from './adoption.entity';
+import { Gender, Species } from '../enums';
 import { BaseEntity } from './base.entity';
 import { PetPhoto } from './pet-photo.entity';
-import { Species } from './species.entity';
 import { User } from './user.entity';
 
 @Entity({ name: 'pets' })
 export class Pet extends BaseEntity {
-  constructor(partial: Partial<Pet>) {
-    super();
-    Object.assign(this, partial);
-  }
-
   @Column({ name: 'name', nullable: true })
   name: string;
 
@@ -56,8 +50,8 @@ export class Pet extends BaseEntity {
   @Column({ name: 'is_adopting', nullable: true, default: false })
   isAdopting: boolean;
 
-  @ManyToOne(() => Species, (species) => species.pets)
-  species?: Species;
+  @Column({ name: 'species', enum: Species, type: 'enum' })
+  species: Species;
 
   @ManyToOne(() => User, (user) => user.pets)
   user?: User;

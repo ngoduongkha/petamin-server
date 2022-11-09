@@ -58,4 +58,14 @@ export class UserService {
 
     return userCreated;
   }
+
+  async searchUsers(search: string) {
+    const users = await this.userRepository.find({
+      where: {
+        email: search,
+      },
+    });
+
+    return users;
+  }
 }
