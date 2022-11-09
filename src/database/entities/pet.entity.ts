@@ -3,6 +3,7 @@ import { Max, Min } from 'class-validator';
 import { ColumnDecimalTransformer } from 'src/common/transformers/column-decimal.transformer';
 import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Gender } from '../enums';
+import { Adoption } from './adoption.entity';
 import { BaseEntity } from './base.entity';
 import { PetPhoto } from './pet-photo.entity';
 import { Species } from './species.entity';
@@ -63,4 +64,7 @@ export class Pet extends BaseEntity {
 
   @OneToMany(() => PetPhoto, (photo) => photo.pet)
   photos?: PetPhoto[];
+
+  @OneToMany(() => Adoption, (adoption) => adoption.pet)
+  adoptions?: Adoption[];
 }

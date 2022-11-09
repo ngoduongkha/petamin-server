@@ -9,6 +9,7 @@ import {
   FileTypeValidator,
   Post,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import {
@@ -46,5 +47,11 @@ export class ProfileController {
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
     return this.profileService.update(userId, updateProfileDto);
+  }
+
+  @Get(':userId')
+  @ApiOkResponse({ type: GetProfileDto })
+  async getByUserId(@Param('userId') userId: string): Promise<GetProfileDto> {
+    return await this.profileService.findByUserId(userId);
   }
 }
