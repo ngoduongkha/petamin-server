@@ -141,6 +141,17 @@ export class AdoptionService {
     await this.petService.changeAdoptionStatus(pet.id, petAdoptingStatus);
   }
 
+  async deleteByPetId(petId: string): Promise<void> {
+    await this.adoptionRepository.update(
+      {
+        petId,
+      },
+      {
+        isDeleted: true,
+      },
+    );
+  }
+
   // async existsAdoptionShowWithPet(petId: string): Promise<boolean> {
   //   const adoption = await this.adoptionRepository.findOne({
   //     where: {

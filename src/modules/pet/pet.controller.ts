@@ -32,8 +32,8 @@ export class PetController {
   }
 
   @Get()
-  findAll() {
-    return this.petService.findAll();
+  findAll(@GetUser('id') userId: string) {
+    return this.petService.findByUserId(userId);
   }
 
   @Get(':id')
@@ -84,4 +84,7 @@ export class PetController {
     return true;
     // return this.petService.remove(id);
   }
+
+  // @Post('transfers')
+  // async transferPet();
 }

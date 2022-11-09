@@ -9,11 +9,10 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Adoption } from './adoption.entity';
+
 import { Gender, Species } from '../enums';
+import { Adoption, PetPhoto, Transaction, User } from '@entity';
 import { BaseEntity } from './base.entity';
-import { PetPhoto } from './pet-photo.entity';
-import { User } from './user.entity';
 
 @Entity({ name: 'pets' })
 export class Pet extends BaseEntity {
@@ -72,4 +71,7 @@ export class Pet extends BaseEntity {
 
   @OneToMany(() => Adoption, (adoption) => adoption.pet)
   adoptions: Adoption[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.pet)
+  transactions: Transaction[];
 }

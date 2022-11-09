@@ -15,6 +15,7 @@ import { AgoraModule } from './modules/agora/agora.module';
 import { FileModule } from './modules/file/file.module';
 import { FollowsModule } from './modules/follows/follows.module';
 import { AdoptionModule } from './modules/adoption/adoption.module';
+import { TransactionModule } from './modules/transaction/transaction.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AdoptionModule } from './modules/adoption/adoption.module';
     FileModule,
     FollowsModule,
     AdoptionModule,
+    TransactionModule,
   ],
 })
 export class AppModule {}
