@@ -19,7 +19,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli"
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli",
+    "seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/dist/cli/index.js seed -d src/ormconfig.ts",
+    "db:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/dist/cli/index.js db:create -d src/ormconfig.ts",
+    "db:drop": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/dist/cli/index.js db:drop -d src/ormconfig.ts"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -46,7 +49,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.10"
+    "typeorm": "^0.3.10",
+    "typeorm-extension": "^2.2.12"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

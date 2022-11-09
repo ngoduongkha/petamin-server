@@ -1,7 +1,14 @@
 import { Type } from 'class-transformer';
 import { Max, Min } from 'class-validator';
 import { ColumnDecimalTransformer } from 'src/common/transformers/column-decimal.transformer';
-import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import {
+  AfterLoad,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Adoption } from './adoption.entity';
 import { Gender, Species } from '../enums';
 import { BaseEntity } from './base.entity';
@@ -53,12 +60,16 @@ export class Pet extends BaseEntity {
   @Column({ name: 'species', enum: Species, type: 'enum' })
   species: Species;
 
+  @Column({ name: 'user_id' })
+  userId: string;
+
   @ManyToOne(() => User, (user) => user.pets)
-  user?: User;
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @OneToMany(() => PetPhoto, (photo) => photo.pet)
-  photos?: PetPhoto[];
+  photos: PetPhoto[];
 
   @OneToMany(() => Adoption, (adoption) => adoption.pet)
-  adoptions?: Adoption[];
+  adoptions: Adoption[];
 }
