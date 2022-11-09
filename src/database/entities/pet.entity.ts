@@ -67,7 +67,7 @@ export class Pet extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => PetPhoto, (photo) => photo.pet)
+  @OneToMany(() => PetPhoto, (photo) => photo.pet, { cascade: ['insert'] })
   photos: PetPhoto[];
 
   @OneToMany(() => Adoption, (adoption) => adoption.pet)

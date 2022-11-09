@@ -29,7 +29,7 @@ export class Profile extends BaseEntity {
   @Column({ name: 'bio', nullable: true })
   bio: string;
 
-  @Column({ name: 'gender', type: 'enum', enum: Gender, nullable: true })
+  @Column({ name: 'gender', type: 'enum', enum: Gender, default: Gender.MALE })
   gender: Gender;
 
   @Column({

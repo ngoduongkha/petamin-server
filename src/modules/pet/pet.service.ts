@@ -32,7 +32,6 @@ export class PetService {
         isDeleted: false,
       },
       relations: {
-        species: true,
         photos: true,
       },
     });
@@ -44,7 +43,6 @@ export class PetService {
         id: petId,
       },
       relations: {
-        species: true,
         photos: true,
       },
     });
@@ -59,6 +57,7 @@ export class PetService {
   }
 
   async update(petId: string, updatePetDto: UpdatePetDto): Promise<Pet> {
+    console.log('updatePetDto :>> ', updatePetDto);
     const updatedPet: Pet = this.petRepository.create({
       ...updatePetDto,
     });

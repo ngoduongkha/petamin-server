@@ -1,4 +1,4 @@
-export * from './adoption';
+export * from './adoption-status';
 export * from './conversation';
-export * from './profile';
+export * from './gender';
 export * from './species';

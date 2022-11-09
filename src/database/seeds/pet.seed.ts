@@ -1,7 +1,8 @@
-import { Pet, User } from '@entity';
+import { Pet, PetPhoto, Profile, User, UserConversation } from '@entity';
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { Gender, Species } from '../enums';
+import * as argon from 'argon2';
 
 export default class PetSeeder implements Seeder {
   async run(
@@ -10,18 +11,34 @@ export default class PetSeeder implements Seeder {
   ): Promise<void> {
     const petRepository = dataSource.getRepository(Pet);
     const userRepository = dataSource.getRepository(User);
+    const profileRepository = dataSource.getRepository(Profile);
+    const petPhotoRepository = dataSource.getRepository(PetPhoto);
+    const userConversationRepository =
+      dataSource.getRepository(UserConversation);
 
+    await userConversationRepository.delete({});
+    await petPhotoRepository.delete({});
     await petRepository.delete({});
+    await profileRepository.delete({});
+    await userRepository.delete({});
+
+    await userRepository.save({
+      email: 'buiminhhuy@gmail.com',
+      password: await argon.hash('abcd1234'),
+      profile: {
+        name: 'Huy',
+      },
+    });
 
     const user = await userRepository.findOneBy({
       email: 'buiminhhuy@gmail.com',
     });
 
-    const models = petRepository.create([
+    await petRepository.save([
       {
         name: 'Milo',
         month: 1,
-        year: 2019,
+        year: 2,
         gender: Gender.FEMALE,
         breed: 'Bulldog',
         isNeuter: true,
@@ -31,12 +48,92 @@ export default class PetSeeder implements Seeder {
         description: 'Milo is a very cute dog',
         isAdopting: true,
         species: Species.DOG,
-        user,
+        photos: [
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+        ],
+        userId: user.id,
       },
       {
         name: 'Milk',
         month: 2,
-        year: 2018,
+        year: 3,
         gender: Gender.MALE,
         breed: 'Chihuahua',
         isNeuter: false,
@@ -46,12 +143,38 @@ export default class PetSeeder implements Seeder {
         description: 'Milk is a very cute dog',
         isAdopting: false,
         species: Species.DOG,
-        user,
+        photos: [
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
+          },
+          {
+            title: '',
+            description: '',
+            imgUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Buldog_angielski_000pl.jpg/300px-Buldog_angielski_000pl.jpg',
+          },
+        ],
+        userId: user.id,
       },
       {
         name: 'Chim',
         month: 2,
-        year: 2012,
+        year: 5,
         gender: Gender.OTHER,
         breed: 'Toucan',
         isNeuter: false,
@@ -61,12 +184,12 @@ export default class PetSeeder implements Seeder {
         description: 'Chim is a very cute bird',
         isAdopting: false,
         species: Species.BIRD,
-        user,
+        userId: user.id,
       },
       {
         name: 'CHIMTHUHAI',
         month: 2,
-        year: 2012,
+        year: 1,
         gender: Gender.OTHER,
         breed: 'Parrots',
         isNeuter: true,
@@ -76,12 +199,12 @@ export default class PetSeeder implements Seeder {
         description: 'CHIMTHUHAI is a very cute bird',
         isAdopting: true,
         species: Species.BIRD,
-        user,
+        userId: user.id,
       },
       {
         name: 'LowMew',
         month: 9,
-        year: 2009,
+        year: 10,
         gender: Gender.OTHER,
         breed: 'Abyssinian',
         isNeuter: true,
@@ -91,12 +214,12 @@ export default class PetSeeder implements Seeder {
         description: 'LowMew is a very cute meow',
         isAdopting: true,
         species: Species.CAT,
-        user,
+        userId: user.id,
       },
       {
         name: 'BinCat',
         month: 2,
-        year: 2012,
+        year: 2,
         gender: Gender.OTHER,
         breed: 'American Bobtail',
         isNeuter: true,
@@ -106,10 +229,8 @@ export default class PetSeeder implements Seeder {
         description: 'BinCat is a very cute meow',
         isAdopting: true,
         species: Species.CAT,
-        user,
+        userId: user.id,
       },
     ]);
-
-    await petRepository.save(models);
   }
 }

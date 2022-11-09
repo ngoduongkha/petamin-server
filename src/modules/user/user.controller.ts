@@ -1,9 +1,16 @@
 import { Conversation, User } from '@entity';
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { GetUser } from '../../common/decorators/get-user.decorator';
-import { JwtGuard } from '../../common/guard/jwt.guard';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
+import { GetUser } from 'src/common/decorators';
+import { JwtGuard } from 'src/common/guard';
 import { ConversationService } from '../conversation/conversation.service';
+import { GetUserDto } from './dto';
 import { UserService } from './user.service';
 
 @ApiTags('user')
@@ -26,6 +33,13 @@ export class UserController {
   //   this.throwUserNotFound(user);
   //   return user;
   // }
+
+  @ApiQuery({ type: GetUserDto })
+  @ApiOkResponse({ type: Paginated<User> })
+  @Get()
+  public findAll(@Paginate() query: PaginateQuery): Promise<Paginated<User>> {
+    return this.userService.findAll(query);
+  }
 
   @Get('conversations')
   async getAllConversation(@GetUser('id') userId: string) {
