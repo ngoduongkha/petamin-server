@@ -1,7 +1,7 @@
 import { Information, User } from '@entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { SaveInformationDto } from './dto/save-infomation.dto';
 
 @Injectable()
@@ -40,12 +40,9 @@ export class InformationService {
   // }
 
   async findSocketId(userIds: string[]): Promise<Information[]> {
-    const socketIds = await this.informationRepository
-      .createQueryBuilder('i')
-      .innerJoinAndSelect(User, 'u', 'u.id = i.userId')
-      .where('u.id IN (:...userIds)', { userIds })
-      .getMany();
-
+    const socketIds = await this.informationRepository.findBy({
+      userId: In(userIds),
+    });
     return socketIds;
   }
 

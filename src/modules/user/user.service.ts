@@ -3,6 +3,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
+import { PaginateQuery, paginate, Paginated } from 'nestjs-paginate';
 
 @Injectable()
 export class UserService {
@@ -40,6 +41,16 @@ export class UserService {
     throw new BadRequestException('User not found');
   }
 
+  public findAll(query: PaginateQuery): Promise<Paginated<User>> {
+    return paginate(query, this.userRepository, {
+      sortableColumns: ['id', 'email', 'profile.name'],
+      nullSort: 'last',
+      searchableColumns: ['profile.name'],
+      defaultSortBy: [['profile.name', 'ASC']],
+      relations: ['profile'],
+    });
+  }
+
   async createUserIfNotExist(registerDto: RegisterDto) {
     const user = await this.userRepository.findOne({
       where: { email: registerDto.email },
@@ -57,5 +68,15 @@ export class UserService {
     const userCreated = await this.userRepository.save(newUser);
 
     return userCreated;
+  }
+
+  async searchUsers(search: string) {
+    const users = await this.userRepository.find({
+      where: {
+        email: search,
+      },
+    });
+
+    return users;
   }
 }

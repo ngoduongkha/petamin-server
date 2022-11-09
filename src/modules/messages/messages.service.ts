@@ -1,8 +1,9 @@
 import { Message } from '@entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { Repository } from 'typeorm';
-import { CreateMessage } from './dto/message.dto';
+import { CreateMessageDto } from './dto';
 
 @Injectable()
 export class MessagesService {
@@ -11,23 +12,19 @@ export class MessagesService {
     private messageRepository: Repository<Message>,
   ) {}
 
-  async findAll(): Promise<Message[]> {
-    return await this.messageRepository.find();
-  }
-
   async findAllPaginate(
     conversationId: string,
-    take: number | null,
-    page: number | null,
-  ): Promise<Message[]> {
-    return await this.messageRepository.find({
-      skip: take * (page - 1),
-      take: take,
-      where: { conversationId },
+    query: PaginateQuery,
+  ): Promise<Paginated<Message>> {
+    return paginate(query, this.messageRepository, {
+      sortableColumns: ['id', 'createdAt'],
+      nullSort: 'last',
+      defaultSortBy: [['createdAt', 'ASC']],
+      where: { conversation: { id: conversationId } },
     });
   }
 
-  async create(inputs: CreateMessage): Promise<Message> {
+  async create(inputs: CreateMessageDto): Promise<Message> {
     return await this.messageRepository.save(inputs);
   }
 

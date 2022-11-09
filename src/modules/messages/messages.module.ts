@@ -10,6 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 import { WsJwtStrategy } from '../auth/strategy/ws-jwt.strategy';
 import { ConfigType } from '@nestjs/config';
 import { JwtConfig } from '@config';
+import { MessagesController } from './messages.controller';
 
 @Module({
   imports: [
@@ -30,5 +31,6 @@ import { JwtConfig } from '@config';
     TypeOrmModule.forFeature([Message, User]),
   ],
   providers: [MessagesGateway, MessagesService, WsJwtStrategy],
+  controllers: [MessagesController],
 })
 export class MessagesModule {}

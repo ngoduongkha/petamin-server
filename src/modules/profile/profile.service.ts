@@ -18,6 +18,8 @@ export class ProfileService {
       relations: { user: true },
     });
 
+    console.log('profile :>> ', profile);
+
     const response = plainToClass(
       GetProfileDto,
       {

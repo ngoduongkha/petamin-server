@@ -9,7 +9,6 @@ import {
 } from '@entity';
 import * as argon from 'argon2';
 import {
-  AfterLoad,
   BeforeInsert,
   Column,
   Entity,
@@ -23,6 +22,11 @@ import { Follows } from './follows.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
+  constructor(partial: Partial<User>) {
+    super();
+    Object.assign(this, partial);
+  }
+
   @Column({ unique: true, type: 'varchar' })
   email: string;
 
@@ -32,7 +36,10 @@ export class User extends BaseEntity {
   @OneToMany(() => Message, (message) => message.user)
   messages?: Message[];
 
-  @OneToOne(() => Profile, (profile) => profile.user, { cascade: true })
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    cascade: true,
+    eager: true,
+  })
   profile: Profile;
 
   @OneToMany(() => Information, (information) => information.user)

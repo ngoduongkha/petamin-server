@@ -4,7 +4,6 @@ export * from './message.entity';
 export * from './profile.entity';
 export * from './information.entity';
 export * from './pet.entity';
-export * from './species.entity';
 export * from './pet-photo.entity';
 export * from './user-conversation.entity';
 export * from './user.entity';
