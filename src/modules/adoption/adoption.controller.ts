@@ -31,6 +31,7 @@ export class AdoptionController {
     @GetUser('id') userId: string,
     @Body() createAdoptDto: CreateAdoptionDto,
   ) {
+    console.log('111111111111 :>> ', 111111111111);
     return this.adoptionService.create(userId, createAdoptDto);
   }
 

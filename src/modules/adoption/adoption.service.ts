@@ -19,9 +19,11 @@ export class AdoptionService {
   ) {}
 
   async create(userId: string, createAdoptionDto: CreateAdoptionDto) {
+    console.log('createAdoptionDto :>> ', createAdoptionDto);
     const isAdopting = await this.petService.isAdopting(
       createAdoptionDto.petId,
     );
+    console.log('isAdopting :>> ', isAdopting);
     if (isAdopting)
       throw new InternalServerErrorException('This pet is already adoption');
 
