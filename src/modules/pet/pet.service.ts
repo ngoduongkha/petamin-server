@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Pet } from '../../database/entities/pet.entity';
-import { PhotoDto, CreatePetDto, UpdatePetDto } from './dto';
+import { PhotoDto, CreatePetDto, UpdatePetDto, DeletePetPhotoDto } from './dto';
 
 @Injectable()
 export class PetService {
@@ -57,7 +57,6 @@ export class PetService {
   }
 
   async update(petId: string, updatePetDto: UpdatePetDto): Promise<Pet> {
-    console.log('updatePetDto :>> ', updatePetDto);
     const updatedPet: Pet = this.petRepository.create({
       ...updatePetDto,
     });
@@ -99,8 +98,8 @@ export class PetService {
     return false;
   }
 
-  async deletePhotos(petId: string, photoIds: string[]): Promise<void> {
-    const deletedPhotos = photoIds.map(async (id) => {
+  async deletePhotos(petId: string, dto: DeletePetPhotoDto): Promise<void> {
+    const deletedPhotos = dto.photoIds.map(async (id) => {
       return await this.petPhotoRepository.delete({
         id: id,
         pet: {

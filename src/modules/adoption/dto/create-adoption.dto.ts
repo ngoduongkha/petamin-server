@@ -1,12 +1,24 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, Min } from 'class-validator';
+import {
+  ApiOperation,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CreateAdoptionDto {
   @ApiProperty({ required: true })
-  @Min(0)
+  @IsPositive()
   price: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: String })
+  @IsString()
+  @IsOptional()
   description: string;
 
   @ApiProperty({ required: true })

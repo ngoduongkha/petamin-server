@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseArrayPipe,
   Patch,
@@ -12,7 +14,7 @@ import {
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/common/decorators';
 import { JwtGuard } from 'src/common/guard';
-import { PhotoDto } from './dto';
+import { DeletePetPhotoDto, PhotoDto } from './dto';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
 import { PetService } from './pet.service';
@@ -71,13 +73,14 @@ export class PetController {
   async getPetPhotos(@Param('petId') petId: string) {
     return await this.petService.getPetPhotos(petId);
   }
-
+  Post;
   @Post(':petId/photos/delete')
+  @HttpCode(HttpStatus.OK)
   async removePhotos(
     @Param('petId') petId: string,
-    @Body() photoIds: string[],
+    @Body() dto: DeletePetPhotoDto,
   ) {
-    await this.petService.deletePhotos(petId, photoIds);
+    await this.petService.deletePhotos(petId, dto);
     return true;
     // return this.petService.remove(id);
   }

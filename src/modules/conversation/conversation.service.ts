@@ -26,13 +26,11 @@ export class ConversationService {
     private readonly entityManager: EntityManager,
   ) {}
 
-  async findUserConversations(userId: string): Promise<Conversation[]> {
+  async findByUserId(userId: string): Promise<Conversation[]> {
     const conversations = await this.conversationRepository.find({
       where: { userConversations: { userId } },
       relations: {
-        userConversations: {
-          user: true,
-        },
+        users: true,
       },
     });
 
@@ -63,13 +61,13 @@ export class ConversationService {
       userConversations: [senderConversation, ...receiverConversations],
     });
 
-    return conversation;
+    return await this.findById(conversation.id);
   }
 
   async findById(id: string): Promise<Conversation> {
     const conversation = await this.conversationRepository.findOne({
       where: { id },
-      relations: { userConversations: true },
+      relations: { users: true },
     });
 
     if (conversation) {
