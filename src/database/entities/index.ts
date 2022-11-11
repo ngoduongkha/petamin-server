@@ -9,3 +9,4 @@ export * from './user-conversation.entity';
 export * from './user.entity';
 export * from './follows.entity';
 export * from './adoption.entity';
+export * from './transaction.entity';

@@ -6,6 +6,8 @@ import {
   Pet,
   Profile,
   UserConversation,
+  Follows,
+  Transaction,
 } from '@entity';
 import * as argon from 'argon2';
 import {
@@ -18,7 +20,6 @@ import {
   OneToOne,
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { Follows } from './follows.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -62,6 +63,12 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Adoption, (adoption) => adoption.user)
   adoptions?: Adoption[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.vendor)
+  vendorTransactions?: Transaction[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.receiver)
+  receiverTransactions?: Transaction[];
 
   @ManyToMany(() => Conversation, (conversations) => conversations.users)
   @JoinTable({

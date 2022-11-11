@@ -26,10 +26,11 @@ export class PetService {
     return await this.getById(petId);
   }
 
-  async findAll(): Promise<Pet[]> {
+  async findByUserId(userId: string): Promise<Pet[]> {
     return await this.petRepository.find({
       where: {
         isDeleted: false,
+        userId,
       },
       relations: {
         photos: true,
@@ -162,6 +163,18 @@ export class PetService {
       },
       {
         isAdopting: adoptionStatus,
+      },
+    );
+  }
+
+  async transferToUser(userId: string, petId: string): Promise<void> {
+    await this.petRepository.update(
+      {
+        id: petId,
+      },
+      {
+        userId: userId,
+        isAdopting: false,
       },
     );
   }
