@@ -9,7 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, In, Repository } from 'typeorm';
+import { Any, EntityManager, In, Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 
@@ -38,15 +38,21 @@ export class ConversationService {
   }
 
   async create(userId: string, dto: CreateConversationDto) {
-    await Promise.all(
-      dto.userIds.map(async (userId) => {
-        try {
-          await this.userService.findById(userId);
-        } catch (error) {
-          throw new BadRequestException('Destination user not found');
-        }
-      }),
-    );
+    const existingConversation = await this.conversationRepository.findOne({
+      where: {
+        users: {
+          id: userId,
+        },
+        userConversations: {
+          userId: In(dto.userIds),
+        },
+      },
+      select: ['id'],
+    });
+
+    if (existingConversation) {
+      return this.findById(existingConversation.id);
+    }
 
     const receiverConversations = dto.userIds.map((userId) => {
       const entity = this.userConversationRepository.create({ userId });
@@ -61,7 +67,7 @@ export class ConversationService {
       userConversations: [senderConversation, ...receiverConversations],
     });
 
-    return await this.findById(conversation.id);
+    return this.findById(conversation.id);
   }
 
   async findById(id: string): Promise<Conversation> {
