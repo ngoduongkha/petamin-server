@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   Max,
   Min,
 } from 'class-validator';
@@ -12,6 +13,7 @@ import { Gender, Species } from 'src/database/enums';
 
 export class CreatePetDto {
   @ApiProperty({ required: true })
+  @IsString()
   name: string;
 
   @ApiPropertyOptional()
