@@ -9,6 +9,12 @@ import { Repository } from 'typeorm';
 import { CreateAdoptionDto, UpdateAdoptionDto } from './dto';
 import { PetService } from '../pet/pet.service';
 import { AdoptionStatus } from 'src/database/enums';
+import {
+  FilterOperator,
+  paginate,
+  Paginated,
+  PaginateQuery,
+} from 'nestjs-paginate';
 
 @Injectable()
 export class AdoptionService {
@@ -42,15 +48,22 @@ export class AdoptionService {
     return await this.findById(adoptionId);
   }
 
-  async findAll(): Promise<Adoption[]> {
-    const adoptions = await this.adoptionRepository.find({
+  async findAll(query: PaginateQuery): Promise<Paginated<Adoption>> {
+    const adoptions = await paginate(query, this.adoptionRepository, {
+      sortableColumns: ['price', 'pet.name'],
+      nullSort: 'last',
+      searchableColumns: ['pet.breed', 'pet.name'],
+      defaultSortBy: [['createdAt', 'DESC']],
+      filterableColumns: {
+        'pet.species': [FilterOperator.IN],
+        price: [FilterOperator.BTW],
+      },
+
       where: {
         isDeleted: false,
         status: AdoptionStatus.SHOW,
       },
-      relations: {
-        pet: true,
-      },
+      relations: ['pet'],
     });
 
     return adoptions;
