@@ -1,20 +1,37 @@
-import { UseGuards } from '@nestjs/common';
+import { Adoption } from '@entity';
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
+  DefaultValuePipe,
   Delete,
-  HttpCode,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { plainToClass } from 'class-transformer';
+import {
+  FilterOperator,
+  Paginate,
+  Paginated,
+  PaginateQuery,
+} from 'nestjs-paginate';
 import { GetUser } from 'src/common/decorators';
 import { JwtGuard } from 'src/common/guard';
 import { AdoptionService } from './adoption.service';
 import {
   CreateAdoptionDto,
+  AdoptionQueryDto,
   UpdateAdoptionDto,
   UpdateAdoptionStatus,
 } from './dto';
@@ -35,9 +52,34 @@ export class AdoptionController {
     return this.adoptionService.create(userId, createAdoptDto);
   }
 
+  @ApiQuery({ type: AdoptionQueryDto })
+  @ApiQuery({
+    type: 'string',
+    required: false,
+    name: 'species',
+    example: 'DOG,CAT',
+  })
+  @ApiQuery({
+    type: 'string',
+    required: false,
+    name: 'btw_price',
+    example: '1,100',
+  })
+  @ApiOkResponse({ type: Paginated<Adoption> })
   @Get()
-  findAll() {
-    return this.adoptionService.findAll();
+  findAll(
+    @Query('species') species: string,
+    @Query('btw_price') btwPrice: string,
+    @Paginate() query: PaginateQuery,
+  ) {
+    const queryCombine = plainToClass(AdoptionQueryDto, {
+      ...query,
+      filter: {
+        'pet.species': `${FilterOperator.IN}:${species}`,
+        price: [`${FilterOperator.BTW}:${btwPrice}`],
+      },
+    });
+    return this.adoptionService.findAll(queryCombine);
   }
 
   @Get('/me')
@@ -74,7 +116,7 @@ export class AdoptionController {
     return this.adoptionService.updateStatus(adoptionId, status);
   }
 
-  @HttpCode(200)
+  @ApiOkResponse()
   @Delete(':adoptionId')
   async delete(@Param('adoptionId') adoptionId: string) {
     await this.adoptionService.delete(adoptionId);
