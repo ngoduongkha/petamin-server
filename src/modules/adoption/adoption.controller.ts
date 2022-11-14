@@ -20,6 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { plainToClass } from 'class-transformer';
+import { info } from 'console';
 import {
   FilterOperator,
   Paginate,
@@ -67,18 +68,28 @@ export class AdoptionController {
   })
   @ApiOkResponse({ type: Paginated<Adoption> })
   @Get()
-  findAll(
+  async findAll(
     @Query('species') species: string,
     @Query('btw_price') btwPrice: string,
-    @Paginate() query: PaginateQuery,
+    @Paginate() query: AdoptionQueryDto,
   ) {
-    const queryCombine = plainToClass(AdoptionQueryDto, {
-      ...query,
-      filter: {
+    let filter = {};
+    if (species) {
+      filter = {
         'pet.species': `${FilterOperator.IN}:${species}`,
-        price: [`${FilterOperator.BTW}:${btwPrice}`],
-      },
-    });
+      };
+    }
+
+    if (btwPrice) {
+      filter = {
+        price: `${FilterOperator.BTW}:${btwPrice}`,
+        ...filter,
+      };
+    }
+
+    const queryCombine = { ...query, filter };
+
+    // const alibaba = await this.adoptionService.findAll(filter);
     return this.adoptionService.findAll(queryCombine);
   }
 
