@@ -26,7 +26,7 @@ export class ProfileService {
   ) {}
 
   async findByUserId(userId: string, me?: string): Promise<GetProfileDto> {
-    const profile = await this.profileRepository.findOne({
+    const { user, ...profile } = await this.profileRepository.findOne({
       where: { userId },
       relations: { user: true },
     });
@@ -40,20 +40,14 @@ export class ProfileService {
 
     const adoptions = await this.adoptionService.findByUserId(userId);
 
-    const response = plainToClass(
-      GetProfileDto,
-      {
-        email: profile.user.email,
-        userId: profile.user.id,
-        pets,
-        adoptions,
-        isFollow,
-        ...profile,
-      },
-      { excludeExtraneousValues: true },
-    );
-
-    return response;
+    return {
+      email: user.email,
+      userId: user.id,
+      pets,
+      adoptions,
+      isFollow,
+      ...profile,
+    };
   }
 
   async update(userId: string, profile: UpdateProfileDto) {
