@@ -95,7 +95,7 @@ export class AdoptionController {
 
   @Get('/me')
   findByMe(@GetUser('id') userId: string) {
-    return this.adoptionService.findByUserId(userId);
+    return this.adoptionService.findByUserId(userId, true);
   }
 
   @Get('/pet/:petId')

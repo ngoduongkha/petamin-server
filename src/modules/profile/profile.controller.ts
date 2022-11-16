@@ -1,31 +1,14 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Patch,
-  UseInterceptors,
-  UploadedFile,
-  ParseFilePipe,
-  FileTypeValidator,
-  Post,
-  UseGuards,
-  Param,
-} from '@nestjs/common';
-import { ProfileService } from './profile.service';
+import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiConsumes,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { GetProfileDto, UpdateProfileDto } from './dto';
-import { JwtGuard } from '../../common/guard/jwt.guard';
 import { GetUser } from '../../common/decorators/get-user.decorator';
-import { User } from '@entity';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { imageFileFilter } from 'src/common/utils/file-filter';
+import { JwtGuard } from '../../common/guard/jwt.guard';
+import { GetProfileDto, UpdateProfileDto } from './dto';
+import { ProfileService } from './profile.service';
 
 @ApiTags('profile')
 @Controller('profile')
@@ -51,7 +34,10 @@ export class ProfileController {
 
   @Get(':userId')
   @ApiOkResponse({ type: GetProfileDto })
-  async getByUserId(@Param('userId') userId: string): Promise<GetProfileDto> {
-    return await this.profileService.findByUserId(userId);
+  async getByUserId(
+    @GetUser('id') me: string,
+    @Param('userId') userId: string,
+  ): Promise<GetProfileDto> {
+    return await this.profileService.findByUserId(userId, me);
   }
 }

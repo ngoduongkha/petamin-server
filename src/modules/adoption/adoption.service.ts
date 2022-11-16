@@ -86,13 +86,20 @@ export class AdoptionService {
     return adoption;
   }
 
-  async findByUserId(userId: string): Promise<Adoption[]> {
+  async findByUserId(
+    userId: string,
+    isMe: boolean = false,
+  ): Promise<Adoption[]> {
+    // Only get adoption has status set 'SHOW' if not user logged in
+    const status = isMe ? undefined : AdoptionStatus.SHOW;
+
     const adoptions = await this.adoptionRepository.find({
       where: {
         isDeleted: false,
         user: {
           id: userId,
         },
+        status,
       },
       relations: {
         pet: true,

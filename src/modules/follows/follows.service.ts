@@ -1,5 +1,10 @@
 import { User } from '@entity';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Follows } from '../../database/entities/follows.entity';
@@ -10,6 +15,8 @@ export class FollowsService {
   constructor(
     @InjectRepository(Follows)
     private followsRepository: Repository<Follows>,
+
+    @Inject(forwardRef(() => ProfileService))
     private profileService: ProfileService,
   ) {}
 
@@ -90,5 +97,19 @@ export class FollowsService {
     });
 
     await this.profileService.updateTotalFollowings(userId, totalFollowings);
+  }
+
+  async isFollow(followerId: string, followingId: string) {
+    await this.followsRepository.findOneBy({
+      userId: followingId,
+      followerId,
+    });
+    const follows = await this.followsRepository.findOneBy({
+      userId: followingId,
+      followerId,
+    });
+
+    if (follows) return true;
+    return false;
   }
 }
