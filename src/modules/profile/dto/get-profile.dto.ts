@@ -82,12 +82,16 @@ export class GetProfileDto {
   totalFollowings: number;
 
   // @Expose()
-  @ApiResponseProperty()
+  @ApiResponseProperty({
+    type: [Pet],
+  })
   @Type(() => Pet)
   pets: Pet[];
 
   @Expose()
-  @ApiResponseProperty()
+  @ApiResponseProperty({
+    type: [Adoption],
+  })
   @Type(() => Adoption)
   adoptions: Adoption[];
 
