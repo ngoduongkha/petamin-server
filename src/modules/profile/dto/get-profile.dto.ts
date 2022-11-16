@@ -1,4 +1,4 @@
-import { User } from '@entity';
+import { Adoption, User } from '@entity';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { Gender } from 'src/database/enums';
@@ -85,6 +85,11 @@ export class GetProfileDto {
   @ApiResponseProperty()
   @Type(() => Pet)
   pets: Pet[];
+
+  @Expose()
+  @ApiResponseProperty()
+  @Type(() => Adoption)
+  adoptions: Adoption[];
 
   @Expose()
   @ApiResponseProperty({

@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
+import { AdoptionService } from '../adoption/adoption.service';
 import { FollowsService } from '../follows/follows.service';
 import { PetService } from '../pet/pet.service';
 import { GetProfileDto, UpdateProfileDto } from './dto';
@@ -18,6 +19,7 @@ export class ProfileService {
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
     private petService: PetService,
+    private adoptionService: AdoptionService,
 
     @Inject(forwardRef(() => FollowsService))
     private followsService: FollowsService,
@@ -36,12 +38,15 @@ export class ProfileService {
       isFollow = await this.followsService.isFollow(me, userId);
     }
 
+    const adoptions = await this.adoptionService.findByUserId(userId);
+
     const response = plainToClass(
       GetProfileDto,
       {
         email: profile.user.email,
         userId: profile.user.id,
         pets,
+        adoptions,
         isFollow,
         ...profile,
       },
