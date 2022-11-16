@@ -1,4 +1,6 @@
-export class ColumnDecimalTransformer {
+import { ValueTransformer } from 'typeorm';
+
+export class ColumnDecimalTransformer implements ValueTransformer {
   to(data: number): number {
     return data;
   }

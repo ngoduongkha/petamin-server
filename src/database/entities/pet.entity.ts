@@ -69,7 +69,9 @@ export class Pet extends BaseEntity {
   @OneToMany(() => PetPhoto, (photo) => photo.pet, { cascade: ['insert'] })
   photos: PetPhoto[];
 
-  @OneToMany(() => Adoption, (adoption) => adoption.pet)
+  @OneToMany(() => Adoption, (adoption) => adoption.pet, {
+    cascade: ['insert'],
+  })
   adoptions: Adoption[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.pet)

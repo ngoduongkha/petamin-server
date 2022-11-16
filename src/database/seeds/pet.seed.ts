@@ -1,7 +1,14 @@
-import { Pet, PetPhoto, Profile, User, UserConversation } from '@entity';
+import {
+  Adoption,
+  Pet,
+  PetPhoto,
+  Profile,
+  User,
+  UserConversation,
+} from '@entity';
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
-import { Gender, Species } from '../enums';
+import { AdoptionStatus, Gender, Species } from '../enums';
 import * as argon from 'argon2';
 
 export default class PetSeeder implements Seeder {
@@ -13,9 +20,11 @@ export default class PetSeeder implements Seeder {
     const userRepository = dataSource.getRepository(User);
     const profileRepository = dataSource.getRepository(Profile);
     const petPhotoRepository = dataSource.getRepository(PetPhoto);
+    const adoptionRepository = dataSource.getRepository(Adoption);
     const userConversationRepository =
       dataSource.getRepository(UserConversation);
 
+    await adoptionRepository.delete({});
     await userConversationRepository.delete({});
     await petPhotoRepository.delete({});
     await petRepository.delete({});
@@ -34,7 +43,7 @@ export default class PetSeeder implements Seeder {
       email: 'buiminhhuy@gmail.com',
     });
 
-    await petRepository.save([
+    const pets = petRepository.create([
       {
         name: 'Milo',
         month: 1,
@@ -47,6 +56,14 @@ export default class PetSeeder implements Seeder {
         weight: 10.5,
         description: 'Milo is a very cute dog',
         species: Species.DOG,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 10.0,
+          },
+        ],
         photos: [
           {
             title: '',
@@ -141,6 +158,14 @@ export default class PetSeeder implements Seeder {
         weight: 5.5,
         description: 'Milk is a very cute dog',
         species: Species.DOG,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 12.0,
+          },
+        ],
         photos: [
           {
             title: '',
@@ -182,6 +207,14 @@ export default class PetSeeder implements Seeder {
         description: 'Chim is a very cute bird',
         species: Species.BIRD,
         userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 12.0,
+          },
+        ],
       },
       {
         name: 'CHIMTHUHAI',
@@ -196,6 +229,14 @@ export default class PetSeeder implements Seeder {
         description: 'CHIMTHUHAI is a very cute bird',
         species: Species.BIRD,
         userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
       },
       {
         name: 'LowMew',
@@ -210,9 +251,17 @@ export default class PetSeeder implements Seeder {
         description: 'LowMew is a very cute meow',
         species: Species.CAT,
         userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
       },
       {
-        name: 'BinCat',
+        name: 'BinCatMeo',
         month: 2,
         year: 2,
         gender: Gender.OTHER,
@@ -224,7 +273,325 @@ export default class PetSeeder implements Seeder {
         description: 'BinCat is a very cute meow',
         species: Species.CAT,
         userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
+      },
+      {
+        name: 'BinCatMeo',
+        month: 2,
+        year: 2,
+        gender: Gender.OTHER,
+        breed: 'American Bobtail',
+        isNeuter: true,
+        avatarUrl:
+          'https://www.purina.com/sites/g/files/auxxlc196/files/styles/kraken_generic_max_width_240/public/AmericanBobtail_body_6.jpg?itok=JYmdZhAt',
+        weight: 1.5,
+        description: 'BinCat is a very cute meow',
+        species: Species.CAT,
+        userId: user.id,
+        isAdopting: true,
+        adoptions: [
+          {
+            userId: user.id,
+            status: AdoptionStatus.SHOW,
+            price: 15.0,
+          },
+        ],
       },
     ]);
+
+    await petRepository.save(pets);
   }
 }
