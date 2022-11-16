@@ -51,7 +51,10 @@ export class ProfileController {
 
   @Get(':userId')
   @ApiOkResponse({ type: GetProfileDto })
-  async getByUserId(@Param('userId') userId: string): Promise<GetProfileDto> {
-    return await this.profileService.findByUserId(userId);
+  async getByUserId(
+    @GetUser('id') me: string,
+    @Param('userId') userId: string,
+  ): Promise<GetProfileDto> {
+    return await this.profileService.findByUserId(userId, me);
   }
 }

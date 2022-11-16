@@ -1,13 +1,17 @@
 import { Follows } from '@entity';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfileModule } from '../profile/profile.module';
 import { FollowsController } from './follows.controller';
 import { FollowsService } from './follows.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Follows]), ProfileModule],
+  imports: [
+    TypeOrmModule.forFeature([Follows]),
+    forwardRef(() => ProfileModule),
+  ],
   controllers: [FollowsController],
   providers: [FollowsService],
+  exports: [FollowsService],
 })
 export class FollowsModule {}

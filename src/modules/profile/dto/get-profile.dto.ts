@@ -1,7 +1,8 @@
 import { User } from '@entity';
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { Gender } from 'src/database/enums';
+import { Pet } from '../../../database/entities/pet.entity';
 
 export class GetProfileDto {
   @Expose()
@@ -79,4 +80,16 @@ export class GetProfileDto {
     example: 0,
   })
   totalFollowings: number;
+
+  @Expose()
+  @ApiResponseProperty()
+  @Type(() => Pet)
+  pets: Pet[];
+
+  @Expose()
+  @ApiResponseProperty({
+    type: Boolean,
+    example: false,
+  })
+  isFollow: boolean;
 }
