@@ -37,8 +37,11 @@ export class UserController {
   @ApiQuery({ type: GetUserDto })
   @ApiOkResponse({ type: Paginated<User> })
   @Get()
-  public findAll(@Paginate() query: PaginateQuery): Promise<Paginated<User>> {
-    return this.userService.findAll(query);
+  async findAll(
+    @Paginate() query: PaginateQuery,
+    @GetUser('id') me: string,
+  ): Promise<Paginated<User>> {
+    return this.userService.findAll(query, me);
   }
 
   @Get('conversations')

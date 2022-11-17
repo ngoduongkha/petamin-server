@@ -33,7 +33,7 @@ export class ProfileService {
 
     const pets = await this.petService.findByUserId(userId);
 
-    let isFollow = false;
+    let isFollow;
     if (me) {
       isFollow = await this.followsService.isFollow(me, userId);
     }
