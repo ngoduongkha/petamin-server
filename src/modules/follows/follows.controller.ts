@@ -13,22 +13,25 @@ export class FollowsController {
 
   @Get('my-followers')
   async getMyFollowers(@GetUser('id') userId: string) {
-    return { data: await this.followsService.getFollowers(userId) };
+    return await this.followsService.getFollowers(userId);
   }
 
   @Get('my-followings')
   async getMyFollowings(@GetUser('id') userId: string) {
-    return { data: await this.followsService.getFollowings(userId) };
+    return await this.followsService.getFollowings(userId);
   }
 
   @Get(':userId/followers')
-  async getFollowers(@Param('userId') userId: string) {
-    return { data: await this.followsService.getFollowers(userId) };
+  async getFollowers(
+    @Param('userId') userId: string,
+    @GetUser('id') me: string,
+  ) {
+    return await this.followsService.getFollowers(userId, me);
   }
 
   @Get(':userId/followings')
   async getFollowings(@Param('userId') userId: string) {
-    return { data: await this.followsService.getFollowings(userId) };
+    return await this.followsService.getFollowings(userId);
   }
 
   @Post(':userId/follow')

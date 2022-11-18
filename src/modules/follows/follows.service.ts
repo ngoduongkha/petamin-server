@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Follows } from '../../database/entities/follows.entity';
 import { ProfileService } from '../profile/profile.service';
+import { GetFollowDto } from './dto';
 
 @Injectable()
 export class FollowsService {
@@ -20,24 +21,55 @@ export class FollowsService {
     private profileService: ProfileService,
   ) {}
 
-  async getFollowers(userId: string): Promise<User[]> {
+  async getFollowers(userId: string, me?: string): Promise<GetFollowDto[]> {
     const follows = await this.followsRepository.find({
       where: { userId },
       relations: ['follower', 'follower.profile'],
     });
 
-    const followers = follows.map((follow) => follow.follower);
+    if (!me) {
+      const followers = follows.map(({ follower }) => {
+        return {
+          userId: follower.id,
+          email: follower.email,
+          ...follower.profile,
+        };
+      });
+      return followers;
+    }
+
+    const myFollowings = await this.getFollowings(me);
+    const followers = follows.map(({ follower }) => {
+      const isFollow = myFollowings.some(
+        (following) => following.userId === follower.id,
+      );
+
+      return {
+        userId: follower.id,
+        email: follower.email,
+        isFollow,
+        ...follower.profile,
+      };
+    });
 
     return followers;
   }
 
-  async getFollowings(userId: string): Promise<User[]> {
+  async getFollowings(userId: string): Promise<GetFollowDto[]> {
     const follows = await this.followsRepository.find({
       where: { followerId: userId },
       relations: ['user', 'user.profile'],
     });
 
-    const followings = follows.map((follow) => follow.user);
+    const followings = follows.map((follow) => {
+      const { user } = follow;
+      return {
+        userId: user.id,
+        email: user.email,
+        isFollow: true,
+        ...user.profile,
+      };
+    });
 
     return followings;
   }
