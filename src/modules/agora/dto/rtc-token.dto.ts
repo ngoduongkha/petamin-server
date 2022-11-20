@@ -1,25 +1,8 @@
 import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
-import { AppRtcRole } from '../enum';
 
 export class RtcTokenDto {
   @ApiProperty({ type: String })
   channelName: string;
-
-  @ApiProperty({ type: Number })
-  uid: number;
-
-  @ApiProperty({
-    type: Number,
-    default: 3600,
-    description: 'expired time in seconds',
-  })
-  expiredTime: number;
-
-  @ApiResponseProperty({
-    enum: AppRtcRole,
-    example: AppRtcRole.PUBLISHER,
-  })
-  role: AppRtcRole;
 }
 
 export class RtcTokenResponse {

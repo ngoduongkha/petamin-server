@@ -11,7 +11,7 @@ export class AgoraController {
   constructor(private readonly agoraService: AgoraService) {}
 
   @Get('/token')
-  generateAccessToken(@Query() dto: RtcTokenDto): RtcTokenResponse {
+  generateAccessToken(@Query('channelName') dto: string): RtcTokenResponse {
     const token = this.agoraService.generateAccessToken(dto);
     return { token };
   }
