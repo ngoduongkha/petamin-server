@@ -30,8 +30,11 @@ export class FollowsController {
   }
 
   @Get(':userId/followings')
-  async getFollowings(@Param('userId') userId: string) {
-    return await this.followsService.getFollowings(userId);
+  async getFollowings(
+    @Param('userId') userId: string,
+    @GetUser('id') me: string,
+  ) {
+    return await this.followsService.getFollowings(userId, me);
   }
 
   @Post(':userId/follow')

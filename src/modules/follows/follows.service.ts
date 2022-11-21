@@ -55,18 +55,36 @@ export class FollowsService {
     return followers;
   }
 
-  async getFollowings(userId: string): Promise<GetFollowDto[]> {
+  async getFollowings(userId: string, me?: string): Promise<GetFollowDto[]> {
     const follows = await this.followsRepository.find({
       where: { followerId: userId },
       relations: ['user', 'user.profile'],
     });
 
-    const followings = follows.map((follow) => {
-      const { user } = follow;
+    // followings of user logged in
+    if (!me) {
+      const followings = follows.map((follow) => {
+        const { user } = follow;
+        return {
+          userId: user.id,
+          email: user.email,
+          isFollow: true,
+          ...user.profile,
+        };
+      });
+      return followings;
+    }
+
+    const myFollowings = await this.getFollowings(me);
+    const followings = follows.map(({ user }) => {
+      const isFollow = myFollowings.some(
+        (following) => following.userId === user.id,
+      );
+
       return {
         userId: user.id,
         email: user.email,
-        isFollow: true,
+        isFollow,
         ...user.profile,
       };
     });
