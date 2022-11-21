@@ -162,4 +162,17 @@ export class FollowsService {
     if (follows) return true;
     return false;
   }
+
+  async removeFollower(me: string, followerId: string) {
+    if (!me || !followerId) throw new BadRequestException();
+
+    const isFollow = await this.isFollow(followerId, me);
+    if (!isFollow)
+      throw new BadRequestException('Cannot remove user not following you');
+
+    await this.followsRepository.delete({
+      userId: me,
+      followerId,
+    });
+  }
 }

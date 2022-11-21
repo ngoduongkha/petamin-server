@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/common/decorators';
 import { FollowsService } from './follows.service';
@@ -51,5 +58,13 @@ export class FollowsController {
     @Param('userId') unfollowingId: string,
   ) {
     await this.followsService.unfollow(userId, unfollowingId);
+  }
+  @HttpCode(200)
+  @Post(':userId/followers/remove')
+  async removeFollower(
+    @GetUser('id') me: string,
+    @Param('userId') userId: string,
+  ) {
+    await this.followsService.removeFollower(me, userId);
   }
 }
