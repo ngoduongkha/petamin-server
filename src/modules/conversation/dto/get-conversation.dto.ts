@@ -1,5 +1,5 @@
-import { Message } from '@entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Message } from 'src/database/entities';
 
 export class GetConversationResponse {
   @ApiProperty()

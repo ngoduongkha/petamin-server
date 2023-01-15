@@ -5,21 +5,19 @@ import { BaseEntity } from './base.entity';
 import { Pet } from './pet.entity';
 import { User } from './user.entity';
 
-@Entity({ name: 'adoptions' })
+@Entity()
 export class Adoption extends BaseEntity {
   @Column({
-    name: 'price',
-    nullable: true,
     type: 'decimal',
     scale: 2,
     transformer: new ColumnDecimalTransformer(),
   })
   price: number;
 
-  @Column({ name: 'description', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   description: string | null;
 
-  @Column({ enum: AdoptionStatus, nullable: true })
+  @Column({ enum: AdoptionStatus })
   status: AdoptionStatus;
 
   @Column({ name: 'pet_id' })

@@ -64,8 +64,9 @@ export class TransactionService {
       throw new InternalServerErrorException('Only pending transaction can be canceled');
     }
 
-    if (userId !== vendorId && userId !== receiverId)
+    if (userId !== vendorId && userId !== receiverId) {
       throw new InternalServerErrorException('Cannot cancel transfer');
+    }
 
     await this.transactionRepository.update(
       {
@@ -89,7 +90,7 @@ export class TransactionService {
     }
 
     // Cancel all pending transactions when complete transfer
-    await this.petService.transferToUser(userId, petId);
+    await this.petService.transferToUser(userId, petId!);
 
     const cancelTrans = this.transactionRepository.update(
       {
@@ -110,7 +111,7 @@ export class TransactionService {
       },
     );
 
-    const deleteAdoptions = this.adoptionService.deleteByPetId(petId);
+    const deleteAdoptions = this.adoptionService.deleteByPetId(petId!);
 
     await Promise.all([cancelTrans, deleteAdoptions, completeTrans]);
   }

@@ -1,16 +1,16 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity({ name: 'follows' })
+@Entity()
 export class Follows {
-  @PrimaryColumn({ name: 'user_id' })
+  @PrimaryColumn()
   userId: string;
 
   @ManyToOne(() => User, (user) => user.followers)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @PrimaryColumn({ name: 'follower_id' })
+  @PrimaryColumn()
   followerId: string;
 
   @ManyToOne(() => User, (user) => user.followings)

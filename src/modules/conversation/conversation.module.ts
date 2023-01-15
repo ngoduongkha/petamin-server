@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Conversation, UserConversation } from '@entity';
+import { Conversation, UserConversation } from 'src/database/entities';
 import { ConversationService } from './conversation.service';
 import { ConversationController } from './conversation.controller';
 import { UserModule } from '../user/user.module';

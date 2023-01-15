@@ -2,16 +2,16 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Pet } from './pet.entity';
 
-@Entity({ name: 'pet_photo' })
+@Entity()
 export class PetPhoto extends BaseEntity {
-  @Column({ name: 'img_url', nullable: true })
+  @Column()
   imgUrl: string;
 
-  @Column({ name: 'title', nullable: true })
-  title: string;
+  @Column({ type: 'varchar', nullable: true })
+  title: string | null;
 
-  @Column({ name: 'description', nullable: true })
-  description: string;
+  @Column({ type: 'varchar', nullable: true })
+  description: string | null;
 
   @ManyToOne(() => Pet, (pet) => pet.photos)
   pet: Pet;

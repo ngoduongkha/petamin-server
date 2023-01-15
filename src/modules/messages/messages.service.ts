@@ -1,7 +1,7 @@
-import { Message } from '@entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { Message } from 'src/database/entities';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dto';
 
@@ -26,18 +26,6 @@ export class MessagesService {
   }
 
   async findById(id: string): Promise<Message> {
-    return this.messageRepository.findOne({ where: { id } });
-  }
-
-  // async update(
-  //   message: MessageEntity,
-  //   inputs: Message,
-  // ): Promise<MessageEntity> {
-  //   return await this.messagesRepository.updateEntity(message, inputs);
-  // }
-
-  async deleteById(id: string): Promise<Message> {
-    const message = await this.messageRepository.findOne({ where: { id } });
-    return this.messageRepository.remove(message);
+    return this.messageRepository.findOneByOrFail({ id });
   }
 }

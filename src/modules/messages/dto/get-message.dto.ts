@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginateQuery } from 'nestjs-paginate';
+import { Conversation, User } from 'src/database/entities';
 import { MessageType } from 'src/database/enums';
 
 export class GetMessageDto implements PaginateQuery {
@@ -36,7 +37,6 @@ export class GetMessageResponse {
   @ApiProperty({ name: 'conversation_id' })
   conversationId: string;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
-  @JoinApiProperty({ name: 'conversation_id' })
+  @ApiProperty({ name: 'conversation_id' })
   conversation?: Conversation;
 }

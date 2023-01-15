@@ -7,7 +7,6 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigType } from '@nestjs/config';
 import { MessagesController } from './messages.controller';
 import { ConversationModule } from '../conversation/conversation.module';
-import { InformationModule } from '../information/information.module';
 import { MessagesGateway } from './messages.gateway';
 import { MessagesService } from './messages.service';
 import { WsJwtStrategy } from '../auth/strategy/ws-jwt.strategy';
@@ -15,7 +14,6 @@ import { WsJwtStrategy } from '../auth/strategy/ws-jwt.strategy';
 @Module({
   imports: [
     ConversationModule,
-    InformationModule,
     PassportModule,
     JwtModule.registerAsync({
       inject: [JwtConfig.KEY],

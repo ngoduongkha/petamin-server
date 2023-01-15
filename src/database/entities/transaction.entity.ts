@@ -1,7 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { Pet, User } from '@entity';
 import { TransactionStatus } from '../enums';
 import { BaseEntity } from './base.entity';
+import { Pet } from './pet.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'transactions' })
 export class Transaction extends BaseEntity {

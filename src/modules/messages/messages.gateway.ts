@@ -1,29 +1,30 @@
 import {
   WebSocketGateway,
   SubscribeMessage,
-  WebSocketServer,
   OnGatewayConnection,
   WsException,
   ConnectedSocket,
   MessageBody,
+  OnGatewayDisconnect,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { JwtService } from '@nestjs/jwt';
-import { Logger, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { ConversationService } from '../conversation/conversation.service';
 import { MessagesService } from './messages.service';
 import { WsJwtGuard } from '../../common/guard';
 import { AuthPayload, SocketWithAuth } from '../auth/types';
 import { MessageSocketEvent } from './events';
-import { SendOnlineDto } from './dto';
+import { SendMessageRequest, SendMessageResponse, TypingRequest, TypingResponse } from './dto';
 
 @UseGuards(WsJwtGuard)
 @WebSocketGateway()
-export class MessagesGateway implements OnGatewayConnection {
+export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private readonly server: Server;
 
-  private readonly logger = new Logger(MessagesGateway.name);
+  private readonly online: string[] = [];
 
   constructor(
     private messagesService: MessagesService,
@@ -31,59 +32,21 @@ export class MessagesGateway implements OnGatewayConnection {
     private jwtService: JwtService,
   ) {}
 
-  // @SubscribeMessage('messages')
-  // async messages(client: Socket, payload: SendMessageDto) {
-  //   const conversation = await this.conversationService.findById(payload.conversationId);
-
-  //   const userIds = conversation.userConversations.map((userConversation) => {
-  //     if (userConversation.userId !== userId) {
-  //       return userConversation.userId;
-  //     }
-  //   });
-
-  //   const message = await this.messagesService.create({
-  //     userId,
-  //     type: payload.type,
-  //     message: payload.message,
-  //     conversationId: payload.conversationId,
-  //   });
-
-  //   await this.conversationService.updateLastMessageId(payload.conversationId, message.id);
-
-  //   dataSocketId.map((value) => {
-  //     this.server.to(value.value).emit('message-received', message);
-  //   });
-  // }
-
   async handleConnection(client: Socket): Promise<void> {
-    try {
-      const { id: userId } = this.getAuthPayload(client);
-      const conversationIds = await this.conversationService.getUserConversationIds(userId);
+    const { id: userId } = this.getAuthPayload(client);
+    const conversationIds = await this.conversationService.getUserConversationIds(userId);
 
-      const onlinePayload: SendOnlineDto = { userId, isOnline: true, socketId: client.id };
+    await client.join(conversationIds);
 
-      await client.join(conversationIds);
-      client.in(conversationIds).emit(MessageSocketEvent.ONLINE, onlinePayload);
+    this.online.push(userId);
 
-      this.logger.log('Client connected', client.id);
-    } catch (ex) {
-      this.logger.error(ex);
-      client.disconnect();
-    }
+    this.server.emit(MessageSocketEvent.ONLINE, this.online);
   }
 
-  @SubscribeMessage(MessageSocketEvent.ONLINE)
-  handleOnline(
-    @ConnectedSocket() client: SocketWithAuth,
-    @MessageBody() payload: SendOnlineDto,
-  ): void {
-    const reply: SendOnlineDto = {
-      userId: client.handshake.user.id,
-      isOnline: true,
-      socketId: client.id,
-    };
+  handleDisconnect(client: Socket): void {
+    this.online.splice(this.online.indexOf(client.id), 1);
 
-    client.to(payload.socketId).emit(MessageSocketEvent.ONLINE, reply);
+    this.server.emit(MessageSocketEvent.ONLINE, this.online);
   }
 
   private getAuthPayload(client: Socket): AuthPayload {
@@ -96,25 +59,47 @@ export class MessagesGateway implements OnGatewayConnection {
     const token = authToken.split(' ')[1];
 
     try {
-      return this.jwtService.verify<AuthPayload>(token);
+      const decoded = this.jwtService.verify<AuthPayload>(token);
+      return decoded;
     } catch (ex) {
       throw new WsException('Invalid token');
     }
   }
 
-  // @SubscribeMessage(MessageSocketEvent.MESSAGE_TYPING)
-  // async messageTyping(
-  //   @ConnectedSocket() client: SocketWithAuth,
-  //   @MessageBody() payload: TypingMessageDto,
-  // ) {
-  //   const { userId } = this.getAuthPayload(client);
+  @SubscribeMessage(MessageSocketEvent.MESSAGE)
+  async messages(
+    socket: SocketWithAuth,
+    { conversationId, type, message }: SendMessageRequest,
+  ): Promise<void> {
+    const newMessage = await this.messagesService.create({
+      userId: socket.handshake.user.id,
+      type,
+      message,
+      conversationId,
+    });
 
-  //   const conversation = await this.conversationService.findById(payload.conversationId);
+    const response: SendMessageResponse = {
+      id: newMessage.id,
+      userId: socket.handshake.user.id,
+      type: newMessage.type,
+      message: newMessage.message,
+    };
 
-  //   const userIds = conversation.userConversations.map((userConversation) => {
-  //     if (userConversation.userId !== userId) {
-  //       return userConversation.userId;
-  //     }
-  //   });
-  // }
+    this.server.to(conversationId).emit(MessageSocketEvent.MESSAGE, response);
+
+    this.conversationService.updateLastMessageId(conversationId, newMessage.id);
+  }
+
+  @SubscribeMessage(MessageSocketEvent.TYPING)
+  async messageTyping(
+    @ConnectedSocket() socket: SocketWithAuth,
+    @MessageBody() { conversationId, isTyping }: TypingRequest,
+  ): Promise<void> {
+    const response: TypingResponse = {
+      userId: socket.handshake.user.id,
+      isTyping,
+    };
+
+    socket.to(conversationId).emit(MessageSocketEvent.TYPING, response);
+  }
 }

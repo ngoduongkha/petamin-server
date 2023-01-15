@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Adoption } from '@entity';
+import { Adoption } from 'src/database/entities';
 import { AdoptionService } from './adoption.service';
 import { AdoptionController } from './adoption.controller';
 import { PetModule } from '../pet/pet.module';
