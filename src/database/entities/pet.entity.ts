@@ -1,18 +1,12 @@
-import { Type } from 'class-transformer';
 import { Max, Min } from 'class-validator';
 import { ColumnDecimalTransformer } from 'src/common/transformers/column-decimal.transformer';
-import {
-  AfterLoad,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
-
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Gender, Species } from '../enums';
-import { Adoption, PetPhoto, Transaction, User } from '@entity';
+import { Adoption } from './adoption.entity';
 import { BaseEntity } from './base.entity';
+import { PetPhoto } from './pet-photo.entity';
+import { Transaction } from './transaction.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'pets' })
 export class Pet extends BaseEntity {

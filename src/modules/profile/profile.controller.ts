@@ -1,10 +1,5 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { JwtGuard } from '../../common/guard/jwt.guard';
 import { GetProfileDto, UpdateProfileDto } from './dto';
@@ -19,25 +14,26 @@ export class ProfileController {
 
   @Get()
   @ApiOkResponse({ type: GetProfileDto })
-  async getMe(@GetUser('id') userId: string): Promise<GetProfileDto> {
-    return await this.profileService.findByUserId(userId);
+  getMe(@GetUser('id') userId: string): Promise<GetProfileDto> {
+    return this.profileService.findByUserId(userId);
   }
 
   @Patch()
   @ApiBody({ type: UpdateProfileDto })
-  async update(
+  @ApiResponse({ type: GetProfileDto })
+  update(
     @GetUser('id') userId: string,
     @Body() updateProfileDto: UpdateProfileDto,
-  ) {
+  ): Promise<GetProfileDto> {
     return this.profileService.update(userId, updateProfileDto);
   }
 
   @Get(':userId')
   @ApiOkResponse({ type: GetProfileDto })
-  async getByUserId(
+  getByUserId(
     @GetUser('id') me: string,
-    @Param('userId') userId: string,
+    @Param('userId', new ParseUUIDPipe()) userId: string,
   ): Promise<GetProfileDto> {
-    return await this.profileService.findByUserId(userId, me);
+    return this.profileService.findByUserId(userId, me);
   }
 }

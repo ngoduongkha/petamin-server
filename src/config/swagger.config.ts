@@ -5,7 +5,7 @@ export const configSwagger = (app: INestApplication): void => {
   const options = new DocumentBuilder()
     .addBearerAuth(
       {
-        description: `[just text field] Please enter token in following format: Bearer <JWT>`,
+        description: '[just text field] Please enter token in following format: Bearer <JWT>',
         name: 'Authorization',
         bearerFormat: 'Bearer',
         scheme: 'Bearer',

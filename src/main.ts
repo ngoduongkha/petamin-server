@@ -1,11 +1,22 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { config } from 'aws-sdk';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { configSwagger } from './config/swagger.config';
-import { config } from 'aws-sdk';
 
-async function bootstrap() {
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      NODE_ENV: 'dev' | 'prod' | 'test';
+      PORT: string;
+      PACKAGE_NAME: string;
+      PACKAGE_VERSION: string;
+    }
+  }
+}
+
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(

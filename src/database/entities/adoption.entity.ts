@@ -17,9 +17,9 @@ export class Adoption extends BaseEntity {
   price: number;
 
   @Column({ name: 'description', nullable: true })
-  description: string;
+  description: string | null;
 
-  @Column({ name: 'status', nullable: true })
+  @Column({ enum: AdoptionStatus, nullable: true })
   status: AdoptionStatus;
 
   @Column({ name: 'pet_id' })

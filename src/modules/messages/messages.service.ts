@@ -12,10 +12,7 @@ export class MessagesService {
     private messageRepository: Repository<Message>,
   ) {}
 
-  async findAllPaginate(
-    conversationId: string,
-    query: PaginateQuery,
-  ): Promise<Paginated<Message>> {
+  async findAllPaginate(conversationId: string, query: PaginateQuery): Promise<Paginated<Message>> {
     return paginate(query, this.messageRepository, {
       sortableColumns: ['id', 'createdAt'],
       nullSort: 'last',
@@ -25,11 +22,11 @@ export class MessagesService {
   }
 
   async create(inputs: CreateMessageDto): Promise<Message> {
-    return await this.messageRepository.save(inputs);
+    return this.messageRepository.save(inputs);
   }
 
   async findById(id: string): Promise<Message> {
-    return await this.messageRepository.findOne({ where: { id } });
+    return this.messageRepository.findOne({ where: { id } });
   }
 
   // async update(
@@ -41,6 +38,6 @@ export class MessagesService {
 
   async deleteById(id: string): Promise<Message> {
     const message = await this.messageRepository.findOne({ where: { id } });
-    return await this.messageRepository.remove(message);
+    return this.messageRepository.remove(message);
   }
 }

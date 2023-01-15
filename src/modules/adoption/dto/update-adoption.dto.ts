@@ -1,6 +1,5 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { Allow, IsOptional, IsPositive, Min } from 'class-validator';
-import { CreateAdoptionDto } from './create-adoption.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsPositive } from 'class-validator';
 
 export class UpdateAdoptionDto {
   @ApiProperty()

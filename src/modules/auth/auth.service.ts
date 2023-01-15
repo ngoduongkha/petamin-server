@@ -1,36 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
-import { User } from '../../database/entities';
-import { UserService } from '../user/user.service';
-import { RegisterDto } from './dto/register.dto';
-import { AuthPayload } from './interface/auth-payload.interface';
 import * as argon from 'argon2';
+import { UserService } from '../user/user.service';
+import { LoginResponse, RegisterDto } from './dto';
+import { AuthPayload } from './types';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly jwtService: JwtService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly jwtService: JwtService, private readonly userService: UserService) {}
 
-  async authentication(email: string, password: string): Promise<any> {
+  async validate(email: string, password: string): Promise<AuthPayload | null> {
     const user = await this.userService.getUserByEmailAndGetPassword(email);
     const check = await argon.verify(user.password, password);
 
     if (!user || !check) {
-      return false;
+      return null;
     }
 
-    return user;
+    return { id: user.id };
   }
 
-  async create(dto: RegisterDto) {
-    const user = await this.userService.createUserIfNotExist(dto);
+  async create(dto: RegisterDto): Promise<LoginResponse> {
+    const { id } = await this.userService.createUserIfNotExist(dto);
 
     const payload: AuthPayload = {
-      email: user.email,
-      userId: user.id,
+      id,
     };
 
     return {
@@ -38,10 +32,9 @@ export class AuthService {
     };
   }
 
-  async login(user: User) {
+  async login(userId: string): Promise<LoginResponse> {
     const payload: AuthPayload = {
-      email: user.email,
-      userId: user.id,
+      id: userId,
     };
 
     return {

@@ -1,34 +1,20 @@
-import { Adoption } from '@entity';
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOkResponse,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
-import { plainToClass } from 'class-transformer';
-import { info } from 'console';
-import {
-  FilterOperator,
-  Paginate,
-  Paginated,
-  PaginateQuery,
-} from 'nestjs-paginate';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { FilterOperator, Paginate, Paginated } from 'nestjs-paginate';
 import { GetUser } from 'src/common/decorators';
 import { JwtGuard } from 'src/common/guard';
+import { Adoption } from 'src/database/entities';
 import { AdoptionService } from './adoption.service';
 import {
   CreateAdoptionDto,
@@ -48,8 +34,7 @@ export class AdoptionController {
   create(
     @GetUser('id') userId: string,
     @Body() createAdoptDto: CreateAdoptionDto,
-  ) {
-    console.log('111111111111 :>> ', 111111111111);
+  ): Promise<Adoption> {
     return this.adoptionService.create(userId, createAdoptDto);
   }
 
@@ -72,7 +57,7 @@ export class AdoptionController {
     @Query('species') species: string,
     @Query('btw_price') btwPrice: string,
     @Paginate() query: AdoptionQueryDto,
-  ) {
+  ): Promise<Paginated<Adoption>> {
     let filter = {};
     if (species) {
       filter = {
@@ -89,47 +74,41 @@ export class AdoptionController {
 
     const queryCombine = { ...query, filter };
 
-    // const alibaba = await this.adoptionService.findAll(filter);
     return this.adoptionService.findAll(queryCombine);
   }
 
   @Get('/me')
-  findByMe(@GetUser('id') userId: string) {
+  findByMe(@GetUser('id') userId: string): Promise<Adoption[]> {
     return this.adoptionService.findByUserId(userId, true);
   }
 
   @Get('/pet/:petId')
-  findByPetId(@Param('petId') petId: string) {
+  findByPetId(@Param('petId', new ParseUUIDPipe()) petId: string): Promise<Adoption> {
     return this.adoptionService.findByPetId(petId);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.adoptionService.findOne(+id);
-  // }
 
   @Patch(':adoptionId')
   @ApiBody({ type: UpdateAdoptionDto })
   update(
-    @Param('adoptionId') adoptionId: string,
+    @Param('adoptionId', new ParseUUIDPipe()) adoptionId: string,
     @Body() updateAdoptionDto: UpdateAdoptionDto,
-  ) {
+  ): Promise<void> {
     return this.adoptionService.update(adoptionId, updateAdoptionDto);
   }
 
   @Patch(':adoptionId/status')
   @ApiBody({ type: UpdateAdoptionStatus })
   updateStatus(
-    @Param('adoptionId') adoptionId: string,
+    @Param('adoptionId', new ParseUUIDPipe()) adoptionId: string,
     @Body() adoptionStatus: UpdateAdoptionStatus,
-  ) {
+  ): Promise<void> {
     const { status } = adoptionStatus;
     return this.adoptionService.updateStatus(adoptionId, status);
   }
 
   @ApiOkResponse()
   @Delete(':adoptionId')
-  async delete(@Param('adoptionId') adoptionId: string) {
-    await this.adoptionService.delete(adoptionId);
+  delete(@Param('adoptionId', new ParseUUIDPipe()) adoptionId: string): Promise<void> {
+    return this.adoptionService.delete(adoptionId);
   }
 }

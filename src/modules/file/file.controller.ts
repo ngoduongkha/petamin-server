@@ -1,14 +1,8 @@
-import {
-  Controller,
-  Post,
-  UploadedFile,
-  UploadedFiles,
-  UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Post, UploadedFile, UploadedFiles } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiFile, ApiFiles } from 'src/common/decorators/api-file.decorator';
 import { imageFileFilter } from 'src/common/utils';
+import { UploadFileResponse } from './dto';
 import { FileService } from './file.service';
 
 @Controller('files')
@@ -18,13 +12,17 @@ export class FileController {
 
   @Post('upload')
   @ApiFile('file', false, { fileFilter: imageFileFilter })
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return await this.fileService.uploadFile(file);
+  @ApiResponse({ status: 200, type: UploadFileResponse })
+  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<UploadFileResponse> {
+    return this.fileService.uploadFile(file);
   }
 
   @Post('multiple-upload')
   @ApiFiles('files')
-  async uploadFiles(@UploadedFiles() files: Array<Express.Multer.File>) {
-    return await this.fileService.uploadFiles(files);
+  @ApiResponse({ status: 200, type: [UploadFileResponse] })
+  async uploadFiles(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ): Promise<UploadFileResponse[]> {
+    return this.fileService.uploadFiles(files);
   }
 }

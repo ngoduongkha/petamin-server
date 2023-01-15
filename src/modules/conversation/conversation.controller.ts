@@ -1,4 +1,3 @@
-import { Conversation } from '@entity';
 import {
   Get,
   Controller,
@@ -6,10 +5,11 @@ import {
   Param,
   Post,
   Body,
-  Put,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Conversation } from 'src/database/entities';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { JwtGuard } from '../../common/guard/jwt.guard';
 import { ConversationService } from './conversation.service';
@@ -23,45 +23,25 @@ export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
 
   @Get('/:id')
-  async getById(@Param('id') id: string): Promise<Conversation> {
+  async getById(@Param('id', ParseUUIDPipe) id: string): Promise<Conversation> {
     const conversation = await this.conversationService.findById(id);
     return conversation;
   }
 
+  @Post()
   @ApiBody({ type: CreateConversationDto })
-  @Post('/')
-  async create(
-    @GetUser('id') userId: string,
-    @Body() dto: CreateConversationDto,
-  ) {
-    return await this.conversationService.create(userId, dto);
+  create(@GetUser('id') userId: string, @Body() dto: CreateConversationDto): Promise<Conversation> {
+    return this.conversationService.create(userId, dto);
   }
 
-  // @Put('/:id')
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() inputs: Conversation,
-  // ): Promise<Conversation> {
-  //   const conversation = await this.conversationService.findById(id);
-  //   return await this.conversationService.update(conversation, inputs);
-  // }
-
-  @Delete('/:id')
-  async delete(@Param('id') id: string): Promise<boolean> {
-    const result = await this.conversationService.deleteById(id);
-
-    return result;
+  @Get()
+  @ApiResponse({ type: [Conversation] })
+  async getAllConversation(@GetUser('id') userId: string): Promise<Conversation[]> {
+    return this.conversationService.getUserConversations(userId);
   }
 
-  @Get('socket/:id')
-  async getDataInformation(@Param('id') id: string): Promise<string[]> {
-    const conversation = await this.conversationService.findById(id);
-
-    const userId: string[] = [];
-    conversation.userConversations.map((room) => {
-      userId.push(room.userId);
-    });
-
-    return userId;
+  @Delete(':id')
+  delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<boolean> {
+    return this.conversationService.deleteById(id);
   }
 }

@@ -1,13 +1,13 @@
 import { ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import * as SocketIO from 'socket.io';
+import { Socket } from 'socket.io';
 
-export class WsJwtGuard extends AuthGuard('wsjwt') {
+export class WsJwtGuard extends AuthGuard('ws-jwt') {
   constructor() {
     super();
   }
 
-  getRequest(context: ExecutionContext) {
-    return context.switchToWs().getClient<SocketIO.Socket>().handshake;
+  getRequest(context: ExecutionContext): any {
+    return context.switchToWs().getClient<Socket>().handshake;
   }
 }

@@ -1,13 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -15,35 +6,30 @@ import {
   ApiCreatedResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '../../database/entities';
-import { UserService } from '../user/user.service';
+import { GetUser } from 'src/common/decorators';
 import { AuthService } from './auth.service';
-import { LoginDto, LoginResponseDto, RegisterDto } from './dto';
+import { LoginDto, LoginResponse, RegisterDto } from './dto';
 import { JwtGuard } from '../../common/guard/jwt.guard';
 import { LocalGuard } from '../../common/guard/local.guard';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @ApiBody({ type: LoginDto })
   @UseGuards(LocalGuard)
   @HttpCode(200)
   @Post('/login')
-  @ApiOkResponse({ type: LoginResponseDto })
-  login(@Request() req: { user: User }) {
-    const { user } = req;
-    return this.authService.login(user);
+  @ApiOkResponse({ type: LoginResponse })
+  login(@GetUser('id') userId: string): Promise<LoginResponse> {
+    return this.authService.login(userId);
   }
 
   @ApiBody({ type: RegisterDto })
-  @ApiCreatedResponse({ type: LoginResponseDto })
+  @ApiCreatedResponse({ type: LoginResponse })
   @Post('/register')
-  async registerUser(@Body() dto: RegisterDto): Promise<LoginResponseDto> {
+  async registerUser(@Body() dto: RegisterDto): Promise<LoginResponse> {
     const { accessToken } = await this.authService.create(dto);
 
     return { accessToken };
@@ -53,7 +39,7 @@ export class AuthController {
   @ApiBearerAuth('access-token')
   @UseGuards(JwtGuard)
   @Post('/logout')
-  async logOut() {
+  async logOut(): Promise<{ status: boolean }> {
     return { status: true };
   }
 }

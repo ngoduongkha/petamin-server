@@ -1,16 +1,12 @@
-import { Conversation, UserConversation } from '@entity';
 import {
   BadRequestException,
-  forwardRef,
-  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Any, EntityManager, In, Repository } from 'typeorm';
-import { UserService } from '../user/user.service';
+import { Conversation, UserConversation } from 'src/database/entities';
+import { In, Repository } from 'typeorm';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 
 @Injectable()
@@ -22,8 +18,6 @@ export class ConversationService {
     private readonly conversationRepository: Repository<Conversation>,
     @InjectRepository(UserConversation)
     private readonly userConversationRepository: Repository<UserConversation>,
-    private readonly userService: UserService,
-    private readonly entityManager: EntityManager,
   ) {}
 
   async findByUserId(userId: string): Promise<Conversation[]> {
@@ -37,7 +31,13 @@ export class ConversationService {
     return conversations;
   }
 
-  async create(userId: string, dto: CreateConversationDto) {
+  async getUserConversationIds(userId: string): Promise<string[]> {
+    const conversations = await this.userConversationRepository.findBy({ userId });
+
+    return conversations.map((conversation) => conversation.conversationId);
+  }
+
+  async create(userId: string, dto: CreateConversationDto): Promise<Conversation> {
     const existingConversation = await this.conversationRepository.findOne({
       where: {
         users: {
@@ -54,9 +54,8 @@ export class ConversationService {
       return this.findById(existingConversation.id);
     }
 
-    const receiverConversations = dto.userIds.map((userId) => {
-      const entity = this.userConversationRepository.create({ userId });
-      return entity;
+    const receiverConversations = dto.userIds.map((id) => {
+      return this.userConversationRepository.create({ userId: id });
     });
 
     const senderConversation = this.userConversationRepository.create({
@@ -97,7 +96,7 @@ export class ConversationService {
     throw new BadRequestException('Conversation not found');
   }
 
-  async updateLastMessageId(conversationId: string, lastMessageId: string) {
+  async updateLastMessageId(conversationId: string, lastMessageId: string): Promise<void> {
     const result = await this.conversationRepository.update(
       {
         id: conversationId,
@@ -112,7 +111,7 @@ export class ConversationService {
     }
   }
 
-  async getUserConversations(userId: string): Promise<any> {
+  async getUserConversations(userId: string): Promise<Conversation[]> {
     const conversationIds = await this.conversationRepository.find({
       where: { userConversations: { userId } },
       select: { id: true },

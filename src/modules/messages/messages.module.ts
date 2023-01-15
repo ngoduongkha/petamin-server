@@ -1,16 +1,16 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { MessagesService } from './messages.service';
-import { MessagesGateway } from './messages.gateway';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtConfig } from 'src/config';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Message, User } from 'src/database/entities';
+import { PassportModule } from '@nestjs/passport';
+import { ConfigType } from '@nestjs/config';
+import { MessagesController } from './messages.controller';
 import { ConversationModule } from '../conversation/conversation.module';
 import { InformationModule } from '../information/information.module';
-import { JwtModule } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Message, User } from '@entity';
-import { PassportModule } from '@nestjs/passport';
+import { MessagesGateway } from './messages.gateway';
+import { MessagesService } from './messages.service';
 import { WsJwtStrategy } from '../auth/strategy/ws-jwt.strategy';
-import { ConfigType } from '@nestjs/config';
-import { JwtConfig } from '@config';
-import { MessagesController } from './messages.controller';
 
 @Module({
   imports: [

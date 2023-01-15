@@ -19,7 +19,7 @@ export class TransactionService {
   ) {}
 
   async getTransferBetween(me: string, userId: any): Promise<Transaction[]> {
-    return await this.transactionRepository.find({
+    return this.transactionRepository.find({
       where: [
         {
           vendorId: me,
@@ -45,7 +45,7 @@ export class TransactionService {
       ...createTransferDto,
     });
 
-    return await this.transactionRepository.save(transaction);
+    return this.transactionRepository.save(transaction);
   }
 
   async findById(transactionId: string): Promise<Transaction> {
@@ -53,18 +53,16 @@ export class TransactionService {
       id: transactionId,
     });
 
-    if (!transaction)
-      throw new InternalServerErrorException('Transaction not found');
+    if (!transaction) throw new InternalServerErrorException('Transaction not found');
 
     return transaction;
   }
 
   async cancelTransfer(userId: string, transactionId: string): Promise<void> {
     const { vendorId, receiverId, status } = await this.findById(transactionId);
-    if (status !== TransactionStatus.PENDING)
-      throw new InternalServerErrorException(
-        'Only pending transaction can be canceled',
-      );
+    if (status !== TransactionStatus.PENDING) {
+      throw new InternalServerErrorException('Only pending transaction can be canceled');
+    }
 
     if (userId !== vendorId && userId !== receiverId)
       throw new InternalServerErrorException('Cannot cancel transfer');
@@ -82,15 +80,13 @@ export class TransactionService {
   async completeTransfer(userId: string, transactionId: string): Promise<void> {
     const { petId, receiverId, status } = await this.findById(transactionId);
 
-    if (status !== TransactionStatus.PENDING)
-      throw new InternalServerErrorException(
-        'Only pending transaction can be complete',
-      );
+    if (status !== TransactionStatus.PENDING) {
+      throw new InternalServerErrorException('Only pending transaction can be complete');
+    }
 
-    if (userId !== receiverId)
-      throw new InternalServerErrorException(
-        'Only receiver can complete transfer',
-      );
+    if (userId !== receiverId) {
+      throw new InternalServerErrorException('Only receiver can complete transfer');
+    }
 
     // Cancel all pending transactions when complete transfer
     await this.petService.transferToUser(userId, petId);

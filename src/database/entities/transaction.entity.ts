@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { TransactionStatus } from '../enums';
 import { Pet, User } from '@entity';
+import { TransactionStatus } from '../enums';
 import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'transactions' })

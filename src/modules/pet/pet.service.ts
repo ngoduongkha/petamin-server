@@ -1,8 +1,7 @@
-import { PetPhoto } from '@entity';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
-import { Pet } from '../../database/entities/pet.entity';
+import { Pet, PetPhoto } from 'src/database/entities';
+import { Repository } from 'typeorm';
 import { PhotoDto, CreatePetDto, UpdatePetDto, DeletePetPhotoDto } from './dto';
 
 @Injectable()
@@ -23,11 +22,11 @@ export class PetService {
       },
     });
     const { id: petId } = await this.petRepository.save(newPet);
-    return await this.getById(petId);
+    return this.getById(petId);
   }
 
   async findByUserId(userId: string): Promise<Pet[]> {
-    return await this.petRepository.find({
+    return this.petRepository.find({
       where: {
         isDeleted: false,
         userId,
@@ -39,7 +38,7 @@ export class PetService {
   }
 
   async getById(petId: string): Promise<Pet> {
-    const pet = await this.petRepository.findOne({
+    const pet = await this.petRepository.findOneOrFail({
       where: {
         id: petId,
       },
@@ -48,11 +47,9 @@ export class PetService {
       },
     });
 
-    if (pet.isDeleted)
-      throw new HttpException(
-        'This species has been remove',
-        HttpStatus.NOT_FOUND,
-      );
+    if (pet.isDeleted) {
+      throw new NotFoundException('This species has been remove');
+    }
 
     return pet;
   }
@@ -69,7 +66,7 @@ export class PetService {
       updatedPet,
     );
 
-    return await this.getById(petId);
+    return this.getById(petId);
   }
 
   async delete(petId: string): Promise<void> {
@@ -101,8 +98,8 @@ export class PetService {
 
   async deletePhotos(petId: string, dto: DeletePetPhotoDto): Promise<void> {
     const deletedPhotos = dto.photoIds.map(async (id) => {
-      return await this.petPhotoRepository.delete({
-        id: id,
+      return this.petPhotoRepository.delete({
+        id,
         pet: {
           id: petId,
         },
@@ -137,7 +134,7 @@ export class PetService {
       throw new HttpException('Pet not found', HttpStatus.NOT_FOUND);
     }
 
-    return await this.petPhotoRepository.find({
+    return this.petPhotoRepository.find({
       where: {
         pet: {
           id: petId,
@@ -148,15 +145,12 @@ export class PetService {
   }
 
   async isAdopting(petId: string): Promise<boolean> {
-    const pet = await this.petRepository.findOneBy({ id: petId });
+    const pet = await this.petRepository.findOneByOrFail({ id: petId });
 
     return pet.isAdopting;
   }
 
-  async changeAdoptionStatus(
-    petId: string,
-    adoptionStatus: boolean,
-  ): Promise<void> {
+  async changeAdoptionStatus(petId: string, adoptionStatus: boolean): Promise<void> {
     await this.petRepository.update(
       {
         id: petId,
@@ -173,7 +167,7 @@ export class PetService {
         id: petId,
       },
       {
-        userId: userId,
+        userId,
         isAdopting: false,
       },
     );

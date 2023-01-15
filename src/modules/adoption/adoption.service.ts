@@ -1,20 +1,11 @@
-import { Adoption } from '@entity';
-import {
-  Injectable,
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Adoption } from 'src/database/entities';
+import { AdoptionStatus } from 'src/database/enums';
 import { Repository } from 'typeorm';
+import { FilterOperator, paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { CreateAdoptionDto, UpdateAdoptionDto } from './dto';
 import { PetService } from '../pet/pet.service';
-import { AdoptionStatus } from 'src/database/enums';
-import {
-  FilterOperator,
-  paginate,
-  Paginated,
-  PaginateQuery,
-} from 'nestjs-paginate';
 
 @Injectable()
 export class AdoptionService {
@@ -24,14 +15,10 @@ export class AdoptionService {
     private petService: PetService,
   ) {}
 
-  async create(userId: string, createAdoptionDto: CreateAdoptionDto) {
-    console.log('createAdoptionDto :>> ', createAdoptionDto);
-    const isAdopting = await this.petService.isAdopting(
-      createAdoptionDto.petId,
-    );
-    console.log('isAdopting :>> ', isAdopting);
-    if (isAdopting)
-      throw new InternalServerErrorException('This pet is already adoption');
+  async create(userId: string, createAdoptionDto: CreateAdoptionDto): Promise<Adoption> {
+    const isAdopting = await this.petService.isAdopting(createAdoptionDto.petId);
+
+    if (isAdopting) throw new InternalServerErrorException('This pet is already adoption');
 
     const adoption = this.adoptionRepository.create({
       userId,
@@ -45,7 +32,7 @@ export class AdoptionService {
     const { id: adoptionId } = await this.adoptionRepository.save(adoption);
     await this.petService.changeAdoptionStatus(createAdoptionDto.petId, true);
 
-    return await this.findById(adoptionId);
+    return this.findById(adoptionId);
   }
 
   async findAll(query: PaginateQuery): Promise<Paginated<Adoption>> {
@@ -86,10 +73,7 @@ export class AdoptionService {
     return adoption;
   }
 
-  async findByUserId(
-    userId: string,
-    isMe: boolean = false,
-  ): Promise<Adoption[]> {
+  async findByUserId(userId: string, isMe: boolean = false): Promise<Adoption[]> {
     // Only get adoption has status set 'SHOW' if not user logged in
     const status = isMe ? undefined : AdoptionStatus.SHOW;
 
@@ -110,7 +94,7 @@ export class AdoptionService {
   }
 
   async findByPetId(petId: string): Promise<Adoption> {
-    const adoption = await this.adoptionRepository.findOneBy({
+    const adoption = await this.adoptionRepository.findOneByOrFail({
       petId,
       isDeleted: false,
     });
@@ -118,10 +102,7 @@ export class AdoptionService {
     return adoption;
   }
 
-  async update(
-    adoptionId: string,
-    updateAdoptionDto: UpdateAdoptionDto,
-  ): Promise<void> {
+  async update(adoptionId: string, updateAdoptionDto: UpdateAdoptionDto): Promise<void> {
     await this.adoptionRepository.update(
       {
         id: adoptionId,
@@ -143,10 +124,7 @@ export class AdoptionService {
     );
   }
 
-  async updateStatus(
-    adoptionId: string,
-    status: AdoptionStatus,
-  ): Promise<void> {
+  async updateStatus(adoptionId: string, status: AdoptionStatus): Promise<void> {
     const { pet } = await this.findById(adoptionId);
     await this.adoptionRepository.update(
       {
@@ -157,8 +135,8 @@ export class AdoptionService {
       },
     );
 
-    const petAdoptingStatus = status === AdoptionStatus.SHOW ? true : false;
-    await this.petService.changeAdoptionStatus(pet.id, petAdoptingStatus);
+    const petAdoptingStatus = status === AdoptionStatus.SHOW;
+    await this.petService.changeAdoptionStatus(pet!.id, petAdoptingStatus);
   }
 
   async deleteByPetId(petId: string): Promise<void> {
@@ -171,19 +149,4 @@ export class AdoptionService {
       },
     );
   }
-
-  // async existsAdoptionShowWithPet(petId: string): Promise<boolean> {
-  //   const adoption = await this.adoptionRepository.findOne({
-  //     where: {
-  //       pet: {
-  //         id: petId,
-  //       },
-  //       status: AdoptionStatus.SHOW,
-  //     },
-  //   });
-
-  //   if (adoption) return true;
-
-  //   return false;
-  // }
 }

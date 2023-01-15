@@ -1,5 +1,5 @@
-import { Profile, User } from '@entity';
 import { setSeederFactory } from 'typeorm-extension';
+import { Profile, User } from '../entities';
 import { Gender } from '../enums';
 
 export default setSeederFactory(User, (faker) => {
@@ -12,13 +12,10 @@ export default setSeederFactory(User, (faker) => {
       address: faker.address.streetAddress(),
       phone: faker.phone.number('0##########'),
       bio: faker.lorem.paragraph(),
-      gender:
-        Object.values(Gender)[
-          Math.floor(Math.random() * Object.keys(Gender).length)
-        ],
+      gender: Object.values(Gender)[Math.floor(Math.random() * Object.keys(Gender).length)],
       birthday: faker.date.past(),
-      totalFollowers: parseInt(faker.random.numeric(3)),
-      totalFollowings: parseInt(faker.random.numeric(3)),
+      totalFollowers: parseInt(faker.random.numeric(3), 10),
+      totalFollowings: parseInt(faker.random.numeric(3), 10),
     }),
   });
 

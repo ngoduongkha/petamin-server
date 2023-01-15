@@ -1,12 +1,6 @@
-import { Profile } from '@entity';
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { plainToClass } from 'class-transformer';
+import { Profile } from 'src/database/entities';
 import { Repository } from 'typeorm';
 import { AdoptionService } from '../adoption/adoption.service';
 import { FollowsService } from '../follows/follows.service';
@@ -26,14 +20,15 @@ export class ProfileService {
   ) {}
 
   async findByUserId(userId: string, me?: string): Promise<GetProfileDto> {
-    const { user, ...profile } = await this.profileRepository.findOne({
+    const { user, ...profile } = await this.profileRepository.findOneOrFail({
       where: { userId },
       relations: { user: true },
     });
 
     const pets = await this.petService.findByUserId(userId);
 
-    let isFollow;
+    let isFollow: boolean = false;
+
     if (me) {
       isFollow = await this.followsService.isFollow(me, userId);
     }
@@ -50,25 +45,17 @@ export class ProfileService {
     };
   }
 
-  async update(userId: string, profile: UpdateProfileDto) {
-    const updatedProfile = await this.profileRepository.update(
-      {
-        userId: userId,
-      },
-      profile,
-    );
+  async update(userId: string, profile: UpdateProfileDto): Promise<GetProfileDto> {
+    const updatedProfile = await this.profileRepository.update({ userId }, profile);
 
     if (!updatedProfile.affected) {
       throw new InternalServerErrorException('Update profile failed');
     }
 
-    return await this.findByUserId(userId);
+    return this.findByUserId(userId);
   }
 
-  async updateTotalFollowers(
-    userId: string,
-    totalFollowers: number,
-  ): Promise<void> {
+  async updateTotalFollowers(userId: string, totalFollowers: number): Promise<void> {
     await this.profileRepository.update(
       { userId },
       {
@@ -77,10 +64,7 @@ export class ProfileService {
     );
   }
 
-  async updateTotalFollowings(
-    userId: string,
-    totalFollowings: number,
-  ): Promise<void> {
+  async updateTotalFollowings(userId: string, totalFollowings: number): Promise<void> {
     await this.profileRepository.update(
       { userId },
       {

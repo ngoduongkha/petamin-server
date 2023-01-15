@@ -12,28 +12,22 @@ export class S3Service {
     this.s3 = new S3();
   }
 
-  async uploadPublicFile(file: Express.Multer.File) {
+  async uploadPublicFile(file: Express.Multer.File): Promise<{ url: string }> {
     if (!FileSupported.includes(file.mimetype)) {
       throw new BadRequestException('File type not supported');
     }
     const timestamp = Date.now().toString();
-    const hashedFileName = crypto
-      .createHash('md5')
-      .update(timestamp)
-      .digest('hex');
+    const hashedFileName = crypto.createHash('md5').update(timestamp).digest('hex');
     const extension = file.originalname.substring(
       file.originalname.lastIndexOf('.'),
       file.originalname.length,
     );
-    const metaData = {
-      'Content-Type': file.mimetype,
-    };
 
     const fileName = hashedFileName + extension;
 
     const uploadResult = await this.s3
       .upload({
-        Bucket: this.configService.get('AWS_PUBLIC_BUCKET_NAME'),
+        Bucket: this.configService.getOrThrow('AWS_PUBLIC_BUCKET_NAME'),
         Body: file.buffer,
         Key: fileName,
         ContentType: file.mimetype,

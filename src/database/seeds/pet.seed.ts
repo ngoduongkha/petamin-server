@@ -1,28 +1,17 @@
-import {
-  Adoption,
-  Pet,
-  PetPhoto,
-  Profile,
-  User,
-  UserConversation,
-} from '@entity';
 import { DataSource } from 'typeorm';
-import { Seeder, SeederFactoryManager } from 'typeorm-extension';
-import { AdoptionStatus, Gender, Species } from '../enums';
+import { Seeder } from 'typeorm-extension';
 import * as argon from 'argon2';
+import { AdoptionStatus, Gender, Species } from '../enums';
+import { Adoption, Pet, PetPhoto, Profile, User, UserConversation } from '../entities';
 
 export default class PetSeeder implements Seeder {
-  async run(
-    dataSource: DataSource,
-    factoryManager: SeederFactoryManager,
-  ): Promise<void> {
+  async run(dataSource: DataSource): Promise<void> {
     const petRepository = dataSource.getRepository(Pet);
     const userRepository = dataSource.getRepository(User);
     const profileRepository = dataSource.getRepository(Profile);
     const petPhotoRepository = dataSource.getRepository(PetPhoto);
     const adoptionRepository = dataSource.getRepository(Adoption);
-    const userConversationRepository =
-      dataSource.getRepository(UserConversation);
+    const userConversationRepository = dataSource.getRepository(UserConversation);
 
     await adoptionRepository.delete({});
     await userConversationRepository.delete({});
@@ -39,7 +28,7 @@ export default class PetSeeder implements Seeder {
       },
     });
 
-    const user = await userRepository.findOneBy({
+    const user = await userRepository.findOneByOrFail({
       email: 'buiminhhuy@gmail.com',
     });
 
@@ -153,8 +142,7 @@ export default class PetSeeder implements Seeder {
         gender: Gender.MALE,
         breed: 'Chihuahua',
         isNeuter: false,
-        avatarUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
+        avatarUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
         weight: 5.5,
         description: 'Milk is a very cute dog',
         species: Species.DOG,
@@ -170,20 +158,17 @@ export default class PetSeeder implements Seeder {
           {
             title: '',
             description: '',
-            imgUrl:
-              'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
+            imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
           },
           {
             title: '',
             description: '',
-            imgUrl:
-              'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
+            imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
           },
           {
             title: '',
             description: '',
-            imgUrl:
-              'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
+            imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Degaen.jpg',
           },
           {
             title: '',
@@ -201,8 +186,7 @@ export default class PetSeeder implements Seeder {
         gender: Gender.OTHER,
         breed: 'Toucan',
         isNeuter: false,
-        avatarUrl:
-          'https://cdn.britannica.com/58/154258-050-1D37F2E7/Toco-toucan.jpg',
+        avatarUrl: 'https://cdn.britannica.com/58/154258-050-1D37F2E7/Toco-toucan.jpg',
         weight: 1.5,
         description: 'Chim is a very cute bird',
         species: Species.BIRD,

@@ -1,6 +1,6 @@
 import { MessageType } from 'src/database/enums';
 
-export class CreateMessageDto {
+export interface CreateMessageDto {
   userId: string;
   message: string;
   conversationId: string;

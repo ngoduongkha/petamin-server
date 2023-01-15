@@ -5,10 +5,7 @@ import { PetController } from './pet.controller';
 import { PetService } from './pet.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Pet]),
-    TypeOrmModule.forFeature([PetPhoto]),
-  ],
+  imports: [TypeOrmModule.forFeature([Pet]), TypeOrmModule.forFeature([PetPhoto])],
   controllers: [PetController],
   providers: [PetService],
   exports: [PetService],

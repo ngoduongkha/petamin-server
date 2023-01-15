@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 export class CreateTransferDto {
   @ApiProperty({ required: true })

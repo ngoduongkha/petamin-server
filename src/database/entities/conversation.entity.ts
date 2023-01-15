@@ -1,15 +1,9 @@
-import { Message, User, UserConversation } from '@entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { Background, Emoji } from '../enums';
 import { BaseEntity } from './base.entity';
+import { Message } from './message.entity';
+import { UserConversation } from './user-conversation.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'conversations' })
 export class Conversation extends BaseEntity {
@@ -28,11 +22,9 @@ export class Conversation extends BaseEntity {
   @OneToMany(() => Message, (message) => message.conversation)
   messages?: Message[];
 
-  @OneToMany(
-    () => UserConversation,
-    (userConversation) => userConversation.conversation,
-    { cascade: ['insert'] },
-  )
+  @OneToMany(() => UserConversation, (userConversation) => userConversation.conversation, {
+    cascade: ['insert'],
+  })
   userConversations!: UserConversation[];
 
   @ManyToMany(() => User, (users) => users.conversations)

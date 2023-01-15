@@ -1,15 +1,9 @@
-import { User } from '@entity';
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Follows } from '../../database/entities/follows.entity';
 import { ProfileService } from '../profile/profile.service';
-import { GetFollowDto } from './dto';
+import { GetFollowResponse } from './dto';
 
 @Injectable()
 export class FollowsService {
@@ -21,7 +15,7 @@ export class FollowsService {
     private profileService: ProfileService,
   ) {}
 
-  async getFollowers(userId: string, me?: string): Promise<GetFollowDto[]> {
+  async getFollowers(userId: string, me?: string): Promise<GetFollowResponse[]> {
     const follows = await this.followsRepository.find({
       where: { userId },
       relations: ['follower', 'follower.profile'],
@@ -40,9 +34,7 @@ export class FollowsService {
 
     const myFollowings = await this.getFollowings(me);
     const followers = follows.map(({ follower }) => {
-      const isFollow = myFollowings.some(
-        (following) => following.userId === follower.id,
-      );
+      const isFollow = myFollowings.some((following) => following.userId === follower.id);
 
       return {
         userId: follower.id,
@@ -55,7 +47,7 @@ export class FollowsService {
     return followers;
   }
 
-  async getFollowings(userId: string, me?: string): Promise<GetFollowDto[]> {
+  async getFollowings(userId: string, me?: string): Promise<GetFollowResponse[]> {
     const follows = await this.followsRepository.find({
       where: { followerId: userId },
       relations: ['user', 'user.profile'],
@@ -77,9 +69,7 @@ export class FollowsService {
 
     const myFollowings = await this.getFollowings(me);
     const followings = follows.map(({ user }) => {
-      const isFollow = myFollowings.some(
-        (following) => following.userId === user.id,
-      );
+      const isFollow = myFollowings.some((following) => following.userId === user.id);
 
       return {
         userId: user.id,
@@ -129,17 +119,15 @@ export class FollowsService {
     await Promise.all([calcFollowers, calcFollowings]);
   }
 
-  async calcFollowers(userId: string) {
+  async calcFollowers(userId: string): Promise<void> {
     const totalFollowers = await this.followsRepository.count({
-      where: {
-        userId: userId,
-      },
+      where: { userId },
     });
 
     await this.profileService.updateTotalFollowers(userId, totalFollowers);
   }
 
-  async calcFollowings(userId: string) {
+  async calcFollowings(userId: string): Promise<void> {
     const totalFollowings = await this.followsRepository.count({
       where: {
         followerId: userId,
@@ -149,26 +137,21 @@ export class FollowsService {
     await this.profileService.updateTotalFollowings(userId, totalFollowings);
   }
 
-  async isFollow(followerId: string, followingId: string) {
-    await this.followsRepository.findOneBy({
-      userId: followingId,
-      followerId,
-    });
-    const follows = await this.followsRepository.findOneBy({
+  async isFollow(followerId: string, followingId: string): Promise<boolean> {
+    const isFollowed = await this.followsRepository.findOneBy({
       userId: followingId,
       followerId,
     });
 
-    if (follows) return true;
-    return false;
+    return !!isFollowed;
   }
 
-  async removeFollower(me: string, followerId: string) {
-    if (!me || !followerId) throw new BadRequestException();
-
+  async removeFollower(me: string, followerId: string): Promise<void> {
     const isFollow = await this.isFollow(followerId, me);
-    if (!isFollow)
+
+    if (!isFollow) {
       throw new BadRequestException('Cannot remove user not following you');
+    }
 
     await this.followsRepository.delete({
       userId: me,

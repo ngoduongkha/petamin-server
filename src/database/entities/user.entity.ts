@@ -1,25 +1,14 @@
-import {
-  Adoption,
-  Conversation,
-  Information,
-  Message,
-  Pet,
-  Profile,
-  UserConversation,
-  Follows,
-  Transaction,
-} from '@entity';
 import * as argon from 'argon2';
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne } from 'typeorm';
+import { Adoption } from './adoption.entity';
 import { BaseEntity } from './base.entity';
+import { Conversation } from './conversation.entity';
+import { Follows } from './follows.entity';
+import { Message } from './message.entity';
+import { Pet } from './pet.entity';
+import { Profile } from './profile.entity';
+import { Transaction } from './transaction.entity';
+import { UserConversation } from './user-conversation.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -43,16 +32,10 @@ export class User extends BaseEntity {
   })
   profile: Profile;
 
-  @OneToMany(() => Information, (information) => information.user)
-  information?: Information[];
-
   @OneToMany(() => Pet, (pet) => pet.user)
   pets?: Pet[];
 
-  @OneToMany(
-    () => UserConversation,
-    (userConversation) => userConversation.user,
-  )
+  @OneToMany(() => UserConversation, (userConversation) => userConversation.user)
   userConversations?: UserConversation[];
 
   @OneToMany(() => Follows, (follows) => follows.user)
@@ -79,14 +62,14 @@ export class User extends BaseEntity {
   conversations: Conversation[];
 
   @BeforeInsert()
-  async hashPassword() {
+  async hashPassword(): Promise<void> {
     if (this.password) {
       this.password = await argon.hash(this.password);
     }
   }
 
   @BeforeInsert()
-  emailToLowerCase() {
+  emailToLowerCase(): void {
     this.email = this.email.toLowerCase();
   }
 }

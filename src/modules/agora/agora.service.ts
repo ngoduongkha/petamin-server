@@ -1,8 +1,7 @@
-import { AgoraConfig } from '@config';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { RtcRole, RtcTokenBuilder } from 'agora-access-token';
-import { RtcTokenDto } from './dto';
+import { AgoraConfig } from 'src/config';
 
 @Injectable()
 export class AgoraService {

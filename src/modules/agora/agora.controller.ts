@@ -1,7 +1,7 @@
-import { Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Query, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AgoraService } from './agora.service';
-import { RtcTokenDto, RtcTokenResponse } from './dto/rtc-token.dto';
+import { RtcTokenResponse } from './dto/rtc-token.dto';
 import { NoCacheInterceptor } from '../../common/interceptor';
 
 @UseInterceptors(NoCacheInterceptor)

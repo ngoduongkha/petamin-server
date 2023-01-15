@@ -1,9 +1,9 @@
-import { User } from '@entity';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginateQuery, paginate, Paginated } from 'nestjs-paginate';
+import { User } from 'src/database/entities';
 import { Not, Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
-import { PaginateQuery, paginate, Paginated } from 'nestjs-paginate';
 
 @Injectable()
 export class UserService {
@@ -12,7 +12,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async getUserByEmailAndGetPassword(email: string) {
+  async getUserByEmailAndGetPassword(email: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { email },
       select: {
@@ -41,7 +41,7 @@ export class UserService {
     throw new BadRequestException('User not found');
   }
 
-  public findAll(query: PaginateQuery, me?: string): Promise<Paginated<User>> {
+  public findAll(query: PaginateQuery, me: string): Promise<Paginated<User>> {
     return paginate(query, this.userRepository, {
       sortableColumns: ['id', 'email', 'profile.name'],
       nullSort: 'last',
@@ -54,7 +54,7 @@ export class UserService {
     });
   }
 
-  async createUserIfNotExist(registerDto: RegisterDto) {
+  async createUserIfNotExist(registerDto: RegisterDto): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { email: registerDto.email },
     });
@@ -73,7 +73,7 @@ export class UserService {
     return userCreated;
   }
 
-  async searchUsers(search: string) {
+  async searchUsers(search: string): Promise<User[]> {
     const users = await this.userRepository.find({
       where: {
         email: search,

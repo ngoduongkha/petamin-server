@@ -1,7 +1,7 @@
-import { User } from '@entity';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { Gender } from '../enums';
 import { BaseEntity } from './base.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'profiles' })
 export class Profile extends BaseEntity {

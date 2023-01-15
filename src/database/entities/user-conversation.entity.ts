@@ -1,5 +1,6 @@
-import { Conversation, User } from '@entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Conversation } from './conversation.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'user_conversation' })
 export class UserConversation {
@@ -13,10 +14,7 @@ export class UserConversation {
   @PrimaryColumn({ name: 'conversation_id' })
   conversationId: string;
 
-  @ManyToOne(
-    () => Conversation,
-    (conversation) => conversation.userConversations,
-  )
+  @ManyToOne(() => Conversation, (conversation) => conversation.userConversations)
   @JoinColumn({ name: 'conversation_id' })
   conversation: Conversation;
 }

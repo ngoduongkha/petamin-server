@@ -9,10 +9,7 @@ export class NoCacheInterceptor implements NestInterceptor {
       .header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     context.switchToHttp().getResponse().header('Expires', '-1');
     context.switchToHttp().getResponse().header('Pragma', 'no-cache');
-    context
-      .switchToHttp()
-      .getResponse()
-      .header('Acess-Control-Allow-Origin', '*');
+    context.switchToHttp().getResponse().header('Acess-Control-Allow-Origin', '*');
     return next.handle();
   }
 }

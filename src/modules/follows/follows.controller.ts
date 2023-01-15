@@ -1,15 +1,9 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, HttpCode, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/common/decorators';
 import { FollowsService } from './follows.service';
 import { JwtGuard } from '../../common/guard/jwt.guard';
+import { GetFollowResponse } from './dto';
 
 @ApiTags('follows')
 @ApiBearerAuth('access-token')
@@ -18,53 +12,57 @@ import { JwtGuard } from '../../common/guard/jwt.guard';
 export class FollowsController {
   constructor(private readonly followsService: FollowsService) {}
 
-  @Get('my-followers')
-  async getMyFollowers(@GetUser('id') userId: string) {
-    return await this.followsService.getFollowers(userId);
+  @Get('/my-followers')
+  @ApiOkResponse({ type: [GetFollowResponse] })
+  getMyFollowers(@GetUser('id') userId: string): Promise<GetFollowResponse[]> {
+    return this.followsService.getFollowers(userId);
   }
 
-  @Get('my-followings')
-  async getMyFollowings(@GetUser('id') userId: string) {
-    return await this.followsService.getFollowings(userId);
+  @Get('/my-followings')
+  @ApiOkResponse({ type: [GetFollowResponse] })
+  getMyFollowings(@GetUser('id') userId: string): Promise<GetFollowResponse[]> {
+    return this.followsService.getFollowings(userId);
   }
 
-  @Get(':userId/followers')
-  async getFollowers(
-    @Param('userId') userId: string,
+  @Get('/:userId/followers')
+  @ApiOkResponse({ type: [GetFollowResponse] })
+  getFollowers(
     @GetUser('id') me: string,
-  ) {
-    return await this.followsService.getFollowers(userId, me);
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+  ): Promise<GetFollowResponse[]> {
+    return this.followsService.getFollowers(userId, me);
   }
 
-  @Get(':userId/followings')
-  async getFollowings(
-    @Param('userId') userId: string,
+  @Get('/:userId/followings')
+  getFollowings(
     @GetUser('id') me: string,
-  ) {
-    return await this.followsService.getFollowings(userId, me);
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+  ): Promise<GetFollowResponse[]> {
+    return this.followsService.getFollowings(userId, me);
   }
 
-  @Post(':userId/follow')
-  async follow(
+  @Post('/:userId/follow')
+  follow(
     @GetUser('id') userId: string,
-    @Param('userId') followingId: string,
-  ) {
-    await this.followsService.follow(userId, followingId);
+    @Param('userId', new ParseUUIDPipe()) followingId: string,
+  ): Promise<void> {
+    return this.followsService.follow(userId, followingId);
   }
 
-  @Post(':userId/unfollow')
-  async unfollow(
+  @Post('/:userId/unfollow')
+  unfollow(
     @GetUser('id') userId: string,
-    @Param('userId') unfollowingId: string,
-  ) {
-    await this.followsService.unfollow(userId, unfollowingId);
+    @Param('userId', new ParseUUIDPipe()) unfollowingId: string,
+  ): Promise<void> {
+    return this.followsService.unfollow(userId, unfollowingId);
   }
+
   @HttpCode(200)
-  @Post(':userId/followers/remove')
-  async removeFollower(
+  @Post('/:userId/followers/remove')
+  removeFollower(
     @GetUser('id') me: string,
-    @Param('userId') userId: string,
-  ) {
-    await this.followsService.removeFollower(me, userId);
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+  ): Promise<void> {
+    return this.followsService.removeFollower(me, userId);
   }
 }

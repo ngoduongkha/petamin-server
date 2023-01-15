@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/common/decorators';
 import { JwtGuard } from 'src/common/guard';
+import { Transaction } from 'src/database/entities';
 import { TransactionService } from './transaction.service';
 import { CreateTransferDto } from './dto/create-transfer.dto';
 
@@ -12,11 +13,11 @@ import { CreateTransferDto } from './dto/create-transfer.dto';
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
-  @Get('/:userId')
+  @Get(':userId')
   getTransferWithUser(
     @GetUser('id') me: string,
-    @Param('userId') userId: string,
-  ) {
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+  ): Promise<Transaction[]> {
     return this.transactionService.getTransferBetween(me, userId);
   }
 
@@ -24,26 +25,23 @@ export class TransactionController {
   transferPet(
     @GetUser('id') vendorId: string,
     @Body() createTransferDto: CreateTransferDto,
-  ) {
+  ): Promise<Transaction> {
     return this.transactionService.createTransfer(vendorId, createTransferDto);
   }
 
   @Post(':transactionId/cancel')
-  async cancelTransfer(
+  cancelTransfer(
     @GetUser('id') userId: string,
-    @Param('transactionId') transactionId: string,
-  ) {
-    return await this.transactionService.cancelTransfer(userId, transactionId);
+    @Param('transactionId', new ParseUUIDPipe()) transactionId: string,
+  ): Promise<void> {
+    return this.transactionService.cancelTransfer(userId, transactionId);
   }
 
   @Post(':transactionId/complete')
-  async completeTransfer(
+  completeTransfer(
     @GetUser('id') userId: string,
-    @Param('transactionId') transactionId: string,
-  ) {
-    return await this.transactionService.completeTransfer(
-      userId,
-      transactionId,
-    );
+    @Param('transactionId', new ParseUUIDPipe()) transactionId: string,
+  ): Promise<void> {
+    return this.transactionService.completeTransfer(userId, transactionId);
   }
 }

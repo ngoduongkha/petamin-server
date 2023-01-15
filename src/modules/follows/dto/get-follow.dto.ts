@@ -1,88 +1,40 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
 import { Gender } from 'src/database/enums';
 
-export class GetFollowDto {
-  @Expose()
-  @ApiResponseProperty({
-    type: String,
-    example: 'Kha',
-  })
+export class GetFollowResponse {
+  @ApiResponseProperty()
   userId: string;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: String,
-    example: 'Kha',
-  })
+  @ApiResponseProperty()
   name: string;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: 'string',
-    example: 'kha@gmail.com',
-  })
+  @ApiResponseProperty()
   email: string;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: String,
-    example: '44 Su Thien An, thanh pho Rach Gia, tinh Kien Giang',
-  })
+  @ApiResponseProperty()
   address: string;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: String,
-    example: '0842837917',
-  })
+  @ApiResponseProperty()
   phone: string;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: 'string',
-    example: 'I am a developer',
-  })
+  @ApiResponseProperty()
   bio: string;
 
-  @Expose()
-  @ApiResponseProperty({
-    enum: Gender,
-    example: Gender.FEMALE,
-  })
+  @ApiResponseProperty()
   gender: Gender;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: Date,
-    example: new Date().toISOString(),
-  })
+  @ApiResponseProperty()
   birthday: Date;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: 'string',
-  })
+  @ApiResponseProperty()
   avatar: string;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: Number,
-    example: 0,
-  })
+  @ApiResponseProperty()
   totalFollowers: number;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: Number,
-    example: 0,
-  })
+  @ApiResponseProperty()
   totalFollowings: number;
 
-  @Expose()
-  @ApiResponseProperty({
-    type: Boolean,
-    example: false,
-  })
+  @ApiResponseProperty()
   isFollow?: boolean;
 }
