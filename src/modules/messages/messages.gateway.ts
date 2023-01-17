@@ -14,9 +14,9 @@ import { Server, Socket } from 'socket.io';
 import { ConversationService } from '../conversation/conversation.service';
 import { MessagesService } from './messages.service';
 import { WsJwtGuard } from '../../common/guard';
-import { AuthPayload, SocketWithAuth } from '../auth/types';
+import { AuthPayload } from '../auth/types';
 import { MessageSocketEvent } from './events';
-import { SendMessageRequest, SendMessageResponse, TypingRequest, TypingResponse } from './dto';
+import { SendMessageDto, SendTypingDto } from './dto';
 
 @UseGuards(WsJwtGuard)
 @WebSocketGateway()
@@ -68,38 +68,22 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage(MessageSocketEvent.MESSAGE)
   async messages(
-    socket: SocketWithAuth,
-    { conversationId, type, message }: SendMessageRequest,
+    @MessageBody()
+    payload: SendMessageDto,
   ): Promise<void> {
-    const newMessage = await this.messagesService.create({
-      userId: socket.handshake.user.id,
-      type,
-      message,
-      conversationId,
-    });
+    const { conversationId } = payload;
+    const { id } = await this.messagesService.create({ ...payload });
 
-    const response: SendMessageResponse = {
-      id: newMessage.id,
-      userId: socket.handshake.user.id,
-      type: newMessage.type,
-      message: newMessage.message,
-    };
+    this.server.to(conversationId).emit(MessageSocketEvent.MESSAGE, { ...payload, id });
 
-    this.server.to(conversationId).emit(MessageSocketEvent.MESSAGE, response);
-
-    this.conversationService.updateLastMessageId(conversationId, newMessage.id);
+    this.conversationService.updateLastMessageId(conversationId, id);
   }
 
   @SubscribeMessage(MessageSocketEvent.TYPING)
   async messageTyping(
-    @ConnectedSocket() socket: SocketWithAuth,
-    @MessageBody() { conversationId, isTyping }: TypingRequest,
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: SendTypingDto,
   ): Promise<void> {
-    const response: TypingResponse = {
-      userId: socket.handshake.user.id,
-      isTyping,
-    };
-
-    socket.to(conversationId).emit(MessageSocketEvent.TYPING, response);
+    socket.to(payload.conversationId).emit(MessageSocketEvent.TYPING, payload);
   }
 }
