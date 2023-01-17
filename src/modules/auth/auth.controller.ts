@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { GetUser } from 'src/common/decorators';
 import { AuthService } from './auth.service';
-import { LoginDto, LoginResponse, RegisterDto } from './dto';
+import { ChangePasswordDto, LoginDto, LoginResponse, RegisterDto } from './dto';
 import { JwtGuard } from '../../common/guard/jwt.guard';
 import { LocalGuard } from '../../common/guard/local.guard';
 
@@ -33,6 +33,17 @@ export class AuthController {
     const { accessToken } = await this.authService.create(dto);
 
     return { accessToken };
+  }
+
+  @ApiOkResponse()
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtGuard)
+  @Post('/change-password')
+  async changePassword(
+    @GetUser('id') userId: string,
+    @Body() dto: ChangePasswordDto,
+  ): Promise<void> {
+    return this.authService.changePassword(userId, dto);
   }
 
   @ApiOkResponse()

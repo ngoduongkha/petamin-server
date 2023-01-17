@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as argon from 'argon2';
 import { PaginateQuery, paginate, Paginated } from 'nestjs-paginate';
 import { User } from 'src/database/entities';
 import { Not, Repository } from 'typeorm';
@@ -81,5 +82,20 @@ export class UserService {
     });
 
     return users;
+  }
+
+  async changePassword(userId: string, oldPwd: string, newPwd: string): Promise<void> {
+    const user = await this.userRepository.findOneOrFail({
+      where: { id: userId },
+      select: ['password', 'id'],
+    });
+
+    const check = await argon.verify(user.password, oldPwd);
+
+    if (!check) {
+      throw new BadRequestException('Old password is incorrect');
+    }
+
+    await this.userRepository.save({ ...user, password: await argon.hash(newPwd) });
   }
 }
