@@ -14,7 +14,7 @@ import { Server, Socket } from 'socket.io';
 import { ConversationService } from '../conversation/conversation.service';
 import { MessagesService } from './messages.service';
 import { WsJwtGuard } from '../../common/guard';
-import { AuthPayload } from '../auth/types';
+import { AuthPayload, SocketWithAuth } from '../auth/types';
 import { MessageSocketEvent } from './events';
 import { SendMessageDto, SendTypingDto } from './dto';
 
@@ -68,22 +68,25 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage(MessageSocketEvent.MESSAGE)
   async messages(
+    @ConnectedSocket() socket: SocketWithAuth,
     @MessageBody()
     payload: SendMessageDto,
   ): Promise<void> {
     const { conversationId } = payload;
-    const { id } = await this.messagesService.create({ ...payload });
+    const { id: userId } = socket.handshake.user;
+    const { id } = await this.messagesService.create({ ...payload, userId });
 
-    this.server.to(conversationId).emit(MessageSocketEvent.MESSAGE, { ...payload, id });
+    this.server.to(conversationId).emit(MessageSocketEvent.MESSAGE, { ...payload, userId, id });
 
     this.conversationService.updateLastMessageId(conversationId, id);
   }
 
   @SubscribeMessage(MessageSocketEvent.TYPING)
   async messageTyping(
-    @ConnectedSocket() socket: Socket,
+    @ConnectedSocket() socket: SocketWithAuth,
     @MessageBody() payload: SendTypingDto,
   ): Promise<void> {
-    socket.to(payload.conversationId).emit(MessageSocketEvent.TYPING, payload);
+    const { id: userId } = socket.handshake.user;
+    socket.to(payload.conversationId).emit(MessageSocketEvent.TYPING, { ...payload, userId });
   }
 }
