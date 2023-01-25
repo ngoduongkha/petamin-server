@@ -127,6 +127,19 @@ export class ConversationService {
       },
     });
 
+    conversations.sort((a, b) => {
+      if (a.lastMessage && b.lastMessage) {
+        return b.lastMessage.createdAt.getTime() - a.lastMessage.createdAt.getTime();
+      }
+      if (a.lastMessage) {
+        return -1;
+      }
+      if (b.lastMessage) {
+        return 1;
+      }
+      return 0;
+    });
+
     return conversations;
   }
 }
