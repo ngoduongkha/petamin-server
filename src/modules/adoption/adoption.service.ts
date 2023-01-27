@@ -135,8 +135,8 @@ export class AdoptionService {
       },
     );
 
-    const petAdoptingStatus = status === AdoptionStatus.SHOW;
-    await this.petService.changeAdoptionStatus(pet!.id, petAdoptingStatus);
+    // const petAdoptingStatus = status === AdoptionStatus.SHOW;
+    // await this.petService.changeAdoptionStatus(pet!.id, petAdoptingStatus);
   }
 
   async deleteByPetId(petId: string): Promise<void> {
@@ -148,5 +148,7 @@ export class AdoptionService {
         isDeleted: true,
       },
     );
+
+    await this.petService.changeAdoptionStatus(petId, false);
   }
 }

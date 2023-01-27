@@ -29,6 +29,7 @@ export class PetService {
     return this.petRepository.find({
       where: {
         isDeleted: false,
+        isAdopting: false,
         userId,
       },
       relations: {
