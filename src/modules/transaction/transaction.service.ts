@@ -40,10 +40,13 @@ export class TransactionService {
     createTransferDto: CreateTransferDto,
   ): Promise<Transaction> {
     const transaction = this.transactionRepository.create({
-      status: TransactionStatus.PENDING,
+      status: TransactionStatus.COMPLETE,
       vendorId,
       ...createTransferDto,
     });
+
+    await this.petService.transferToUser(createTransferDto.receiverId, createTransferDto.petId!);
+    await this.adoptionService.deleteByPetId(createTransferDto.petId!);
 
     return this.transactionRepository.save(transaction);
   }

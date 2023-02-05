@@ -122,6 +122,9 @@ export class AdoptionService {
         isDeleted: true,
       },
     );
+
+    const { petId } = await this.findById(adoptionId);
+    await this.petService.changeAdoptionStatus(petId, false);
   }
 
   async updateStatus(adoptionId: string, status: AdoptionStatus): Promise<void> {
@@ -149,6 +152,5 @@ export class AdoptionService {
       },
     );
 
-    await this.petService.changeAdoptionStatus(petId, false);
   }
 }
