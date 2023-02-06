@@ -9,7 +9,7 @@ export class Message extends BaseEntity {
   @Column({ default: false })
   status: boolean;
 
-  @Column({ name: 'message' })
+  @Column({ name: 'message', nullable: true })
   message: string;
 
   @Column({ name: 'type', type: 'enum', enum: MessageType })
